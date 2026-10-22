@@ -44,32 +44,107 @@ class ParsedUrl:
     tld: str | None
     is_idn: bool
     punycode_labels: tuple[str, ...]
+    is_private_ip: bool = False
 
 
-def _parse_ip_notation(host: str) -> tuple[bool, int | None, str, str]:
+def is_ssrf_ip(ip: ipaddress.IPv4Address | ipaddress.IPv6Address) -> bool:
+    """Determine whether an IP address is internal, private, loopback, link-local, multicast, or reserved."""
+    if isinstance(ip, ipaddress.IPv6Address):
+        if ip.ipv4_mapped:
+            return is_ssrf_ip(ip.ipv4_mapped)
+        return (
+            ip.is_private
+            or ip.is_loopback
+            or ip.is_link_local
+            or ip.is_multicast
+            or ip.is_reserved
+            or ip.is_unspecified
+        )
+    # IPv4 classifications
+    return (
+        ip.is_private
+        or ip.is_loopback
+        or ip.is_link_local
+        or ip.is_multicast
+        or ip.is_reserved
+        or ip.is_unspecified
+        or ip in ipaddress.IPv4Network("100.64.0.0/10")
+        or ip in ipaddress.IPv4Network("198.18.0.0/15")
+    )
+
+
+def is_ssrf_host(host: str) -> bool:
+    """Determine if a hostname is an SSRF target (internal name, loopback, cloud metadata, or private IP)."""
+    clean_host = host.strip("[]").rstrip(".").lower()
+    if clean_host in (
+        "localhost",
+        "instance-data",
+        "metadata",
+        "metadata.google.internal",
+        "169.254.169.254",
+        "127.0.0.1",
+        "::1",
+    ):
+        return True
+
+    if any(
+        clean_host.endswith(suffix)
+        for suffix in (
+            ".localhost",
+            ".local",
+            ".internal",
+            ".corp",
+            ".lan",
+            ".home",
+            ".arpa",
+            ".invalid",
+            ".test",
+        )
+    ):
+        return True
+
+    is_ip, _, _, _, is_priv = _parse_ip_notation(clean_host)
+    return is_ip and is_priv
+
+
+def _parse_ip_notation(host: str) -> tuple[bool, int | None, str, str, bool]:
     """Parse potential IPv4 or IPv6 literals, identifying obfuscated notations.
 
     Returns:
-        (is_ip, ip_version, notation_type, normalized_dotted_or_ipv6_host)
+        (is_ip, ip_version, notation_type, normalized_dotted_or_ipv6_host, is_private)
     """
     clean_host = host.rstrip(".")
 
-    # IPv6 bracket check
-    if clean_host.startswith("[") and clean_host.endswith("]"):
-        ipv6_body = clean_host[1:-1]
+    # IPv6 check: bracketed [::1] or bare fe80::1
+    ipv6_body = (
+        clean_host[1:-1]
+        if (clean_host.startswith("[") and clean_host.endswith("]"))
+        else clean_host
+    )
+    if ":" in ipv6_body:
         try:
             ip_obj = ipaddress.IPv6Address(ipv6_body)
-            return True, 6, "ipv6", f"[{ip_obj.compressed}]"
+            return True, 6, "ipv6", f"[{ip_obj.compressed}]", is_ssrf_ip(ip_obj)
         except ValueError:
-            return False, None, "none", clean_host
+            return False, None, "none", clean_host, False
 
-    # Decimal integer IPv4 (dword)
+    # Single-part octal with leading zero: 017700000001
+    if clean_host.startswith("0") and len(clean_host) > 1 and clean_host.isdigit():
+        try:
+            val = int(clean_host, 8)
+            if 0 <= val <= 0xFFFFFFFF:
+                ip_obj = ipaddress.IPv4Address(val)
+                return True, 4, "octal", str(ip_obj), is_ssrf_ip(ip_obj)
+        except ValueError:
+            pass
+
+    # Decimal integer IPv4 (dword): 2130706433
     if clean_host.isdigit():
         val = int(clean_host)
         if 0 <= val <= 0xFFFFFFFF:
             try:
                 ip_obj = ipaddress.IPv4Address(val)
-                return True, 4, "decimal", str(ip_obj)
+                return True, 4, "decimal", str(ip_obj), is_ssrf_ip(ip_obj)
             except ValueError:
                 pass
 
@@ -79,19 +154,19 @@ def _parse_ip_notation(host: str) -> tuple[bool, int | None, str, str]:
             val = int(clean_host, 16)
             if 0 <= val <= 0xFFFFFFFF:
                 ip_obj = ipaddress.IPv4Address(val)
-                return True, 4, "hex", str(ip_obj)
+                return True, 4, "hex", str(ip_obj), is_ssrf_ip(ip_obj)
         except ValueError:
             pass
 
-    # Multi-part IPv4 (dotted decimal, hex components, or octal components)
+    # Multi-part IPv4 (2 to 4 parts: dotted decimal, hex components, or octal components)
     parts = clean_host.split(".")
-    if len(parts) == 4:
+    if 2 <= len(parts) <= 4:
         is_octal = False
         is_hex = False
         is_all_valid = True
         int_parts: list[int] = []
 
-        for p in parts:
+        for idx, p in enumerate(parts):
             if not p:
                 is_all_valid = False
                 break
@@ -108,26 +183,50 @@ def _parse_ip_notation(host: str) -> tuple[bool, int | None, str, str]:
                     is_all_valid = False
                     break
 
-                if 0 <= val <= 255:
-                    int_parts.append(val)
+                if idx < len(parts) - 1:
+                    if not (0 <= val <= 255):
+                        is_all_valid = False
+                        break
                 else:
-                    is_all_valid = False
-                    break
+                    max_part = (
+                        0xFFFFFFFF
+                        if len(parts) == 1
+                        else (
+                            0xFFFFFF if len(parts) == 2 else (0xFFFF if len(parts) == 3 else 0xFF)
+                        )
+                    )
+                    if not (0 <= val <= max_part):
+                        is_all_valid = False
+                        break
+
+                int_parts.append(val)
             except ValueError:
                 is_all_valid = False
                 break
 
-        if is_all_valid and len(int_parts) == 4:
-            normalized_ip = ".".join(str(n) for n in int_parts)
-            if is_hex:
-                notation = "hex"
-            elif is_octal:
-                notation = "octal"
+        if is_all_valid and 2 <= len(int_parts) <= 4:
+            if len(int_parts) == 4:
+                combined_val = (
+                    (int_parts[0] << 24) | (int_parts[1] << 16) | (int_parts[2] << 8) | int_parts[3]
+                )
+            elif len(int_parts) == 3:
+                combined_val = (int_parts[0] << 24) | (int_parts[1] << 16) | int_parts[2]
+            elif len(int_parts) == 2:
+                combined_val = (int_parts[0] << 24) | int_parts[1]
             else:
-                notation = "dotted"
-            return True, 4, notation, normalized_ip
+                combined_val = int_parts[0]
 
-    return False, None, "none", clean_host
+            if 0 <= combined_val <= 0xFFFFFFFF:
+                ip_obj = ipaddress.IPv4Address(combined_val)
+                if is_hex:
+                    notation = "hex"
+                elif is_octal:
+                    notation = "octal"
+                else:
+                    notation = "dotted"
+                return True, 4, notation, str(ip_obj), is_ssrf_ip(ip_obj)
+
+    return False, None, "none", clean_host, False
 
 
 def parse_and_validate_url(raw: str, max_chars: int = 2048) -> ParsedUrl:
@@ -260,7 +359,7 @@ def parse_and_validate_url(raw: str, max_chars: int = 2048) -> ParsedUrl:
         ) from None
 
     # Parse IP notation
-    is_ip, ip_version, ip_notation, normalized_host = _parse_ip_notation(decoded_host)
+    is_ip, ip_version, ip_notation, normalized_host, is_private = _parse_ip_notation(decoded_host)
 
     # Host length validation
     if len(normalized_host) > 253:
@@ -364,6 +463,7 @@ def parse_and_validate_url(raw: str, max_chars: int = 2048) -> ParsedUrl:
         tld=tld,
         is_idn=is_idn,
         punycode_labels=tuple(punycode_labels),
+        is_private_ip=is_private,
     )
 
 

@@ -95,6 +95,9 @@ class InputTooLargeError(AppError):
         )
 
 
+PayloadTooLargeError = InputTooLargeError
+
+
 class UnauthenticatedError(AppError):
     """Missing or invalid session or authentication credentials."""
 
@@ -139,6 +142,22 @@ class NotFoundError(AppError):
             code="NOT_FOUND",
             message=message,
             http_status=404,
+            details=details,
+        )
+
+
+class ConflictError(AppError):
+    """Target resource state conflict (e.g. duplicate item)."""
+
+    def __init__(
+        self,
+        message: str = "The request conflicts with existing state.",
+        details: list[dict[str, Any]] | None = None,
+    ) -> None:
+        super().__init__(
+            code="CONFLICT",
+            message=message,
+            http_status=409,
             details=details,
         )
 

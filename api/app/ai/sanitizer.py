@@ -41,6 +41,14 @@ _INJECTION_PATTERNS = [
         r"(classify|mark|declare|rate)\s+this\s+(as\s+)?(safe|clean|harmless|benign|trusted)",
         re.IGNORECASE,
     ),
+    re.compile(r"\b(DAN|jailbreak|jailbroken)\b", re.IGNORECASE),
+    re.compile(r"---+.*(system|prompt|instruction).*", re.IGNORECASE),
+    re.compile(r"bypass\s+(all\s+)?(safety|filters|guardrails|restrictions)", re.IGNORECASE),
+    re.compile(
+        r"(print|output|repeat|display|dump)\s+(the\s+)?(above|initial|system\s+prompt|instructions)\s+(verbatim|word\s+for\s+word)?",
+        re.IGNORECASE,
+    ),
+    re.compile(r"<\s*script[^>]*>", re.IGNORECASE),
     re.compile(r"[A-Za-z0-9+/=]{80,}"),  # Suspicious long base64 payload
 ]
 

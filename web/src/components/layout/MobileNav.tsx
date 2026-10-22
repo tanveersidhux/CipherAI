@@ -6,6 +6,8 @@ import {
   MessageSquareWarning,
   History,
   BarChart3,
+  FolderLock,
+  Mail,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -13,9 +15,12 @@ const MOBILE_NAV_ITEMS = [
   { title: 'Home', href: '/', icon: Home },
   { title: 'URL', href: '/scan/url', icon: LinkIcon },
   { title: 'Message', href: '/scan/message', icon: MessageSquareWarning },
+  { title: 'Email', href: '/scan/email', icon: Mail },
   { title: 'History', href: '/history', icon: History },
+  { title: 'Cases', href: '/cases', icon: FolderLock },
   { title: 'Metrics', href: '/dashboard', icon: BarChart3 },
 ]
+
 
 export function MobileNav() {
   return (

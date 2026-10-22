@@ -113,6 +113,32 @@ export interface ThreatReport {
   recommended_actions: RecommendedAction[]
   engine_version: string
   processing: ProcessingMetadata
+  scan_id?: string | null
+  persistence_status?: 'saved' | 'not_saved_guest' | 'save_failed'
+  saved_at?: string | null
+  reputation_results?: Array<{
+    provider: string
+    status: 'match_found' | 'no_match' | 'inconclusive' | 'provider_error' | 'rate_limited' | 'disabled'
+    categories: string[]
+    summary: string
+    checked_at?: string
+  }> | null
+  email_summary?: Record<string, any> | null
+  extracted_urls?: Array<{
+    url: string
+    risk_score: number
+    risk_level: string
+    reputation_status: string
+    indicator_count: number
+  }> | null
+  attachments?: Array<{
+    filename: string
+    content_type: string
+    size_bytes: number
+    sha256: string
+    risky_extension?: boolean
+    is_executable?: boolean
+  }> | null
 }
 
 /**

@@ -14,6 +14,7 @@ ErrorCode = Literal[
     "UNAUTHENTICATED",
     "FORBIDDEN",
     "NOT_FOUND",
+    "CONFLICT",
     "METHOD_NOT_ALLOWED",
     "RATE_LIMITED",
     "DEPENDENCY_UNAVAILABLE",

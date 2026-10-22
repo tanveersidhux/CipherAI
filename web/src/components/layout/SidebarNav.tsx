@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import {
   Home,
   Link as LinkIcon,
@@ -9,24 +9,32 @@ import {
   Settings,
   FolderLock,
   FlaskConical,
+  LogIn,
+  LogOut,
+  User,
+  Mail,
+  Layers,
 } from 'lucide-react'
 import { Logo } from './Logo'
 import { ThemeToggle } from './ThemeToggle'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/context/AuthContext'
 import { cn } from '@/lib/utils'
-
-// Feature flag for post-MVP cases module
-export const ENABLE_CASES = false
 
 const PRIMARY_NAV_ITEMS = [
   { title: 'Home', href: '/', icon: Home },
   { title: 'Scan URL', href: '/scan/url', icon: LinkIcon },
   { title: 'Scan Message', href: '/scan/message', icon: MessageSquareWarning },
+  { title: 'Scan Email', href: '/scan/email', icon: Mail },
+  { title: 'Batch Scan', href: '/batches', icon: Layers },
   { title: 'History', href: '/history', icon: History },
   { title: 'Dashboard', href: '/dashboard', icon: BarChart3 },
+  { title: 'Cases', href: '/cases', icon: FolderLock },
 ]
 
 export function SidebarNav() {
   const isDev = import.meta.env.DEV
+  const { user, signOut } = useAuth()
 
   return (
     <aside
@@ -72,28 +80,41 @@ export function SidebarNav() {
               </NavLink>
             )
           })}
-
-          {ENABLE_CASES && (
-            <NavLink
-              to="/cases"
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all min-h-[44px]',
-                  isActive
-                    ? 'bg-primary/10 text-primary font-semibold'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                )
-              }
-            >
-              <FolderLock className="h-4 w-4 shrink-0" aria-hidden="true" />
-              <span>Cases (Dossiers)</span>
-            </NavLink>
-          )}
         </nav>
       </div>
 
-      {/* Secondary & System Navigation */}
+      {/* User Auth & Secondary Navigation */}
       <div className="flex flex-col space-y-3 pt-4 border-t border-border/40">
+        {user ? (
+          <div className="rounded-lg bg-muted/40 p-2.5 border border-border/50 flex flex-col gap-2">
+            <div className="flex items-center gap-2 overflow-hidden">
+              <div className="h-7 w-7 rounded-full bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                <User className="h-4 w-4" />
+              </div>
+              <div className="truncate text-xs">
+                <span className="font-semibold block truncate text-foreground">{user.email ?? 'User'}</span>
+                <span className="text-[10px] text-muted-foreground">Authenticated</span>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void signOut()}
+              className="w-full h-8 text-xs gap-1.5 text-muted-foreground hover:text-destructive hover:border-destructive/30"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              Sign Out
+            </Button>
+          </div>
+        ) : (
+          <Link to="/login">
+            <Button variant="default" size="sm" className="w-full gap-2 text-xs font-semibold">
+              <LogIn className="h-3.5 w-3.5" />
+              Sign In to Save
+            </Button>
+          </Link>
+        )}
+
         {isDev && (
           <NavLink
             to="/dev/states"
@@ -132,3 +153,4 @@ export function SidebarNav() {
     </aside>
   )
 }
+

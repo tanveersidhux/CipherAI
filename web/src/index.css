@@ -127,7 +127,7 @@
   aside,
   .no-print,
   button,
-  .print\\:hidden {
+  .print\:hidden {
     display: none !important;
   }
 

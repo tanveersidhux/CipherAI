@@ -1,19 +1,20 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useCipherApi } from '@/lib/api/client'
-import type { DashboardSummary } from '@/types/api'
+import type { DashboardSummaryResponse } from '@/types/dashboard'
 import { ApiError } from '@/types/api'
 
-export function useDashboardSummary() {
+export function useDashboardSummary(rangeDays: number = 30) {
   const api = useCipherApi()
-  const [data, setData] = useState<DashboardSummary | null>(null)
+  const [data, setData] = useState<DashboardSummaryResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<ApiError | null>(null)
   const [trigger, setTrigger] = useState(0)
 
   useEffect(() => {
     let ignore = false
+    setLoading(true)
     api
-      .getDashboardSummary()
+      .getDashboardSummary(rangeDays)
       .then((summary) => {
         if (!ignore) {
           setData(summary)
@@ -35,7 +36,7 @@ export function useDashboardSummary() {
     return () => {
       ignore = true
     }
-  }, [api, trigger])
+  }, [api, rangeDays, trigger])
 
   const refetch = useCallback(() => {
     setLoading(true)
@@ -45,3 +46,4 @@ export function useDashboardSummary() {
 
   return { data, loading, error, refetch }
 }
+

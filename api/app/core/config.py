@@ -46,9 +46,11 @@ class Settings(BaseSettings):
 
     # Database (Supabase) Configuration
     SUPABASE_URL: str | None = None
+    SUPABASE_ANON_KEY: SecretStr | None = None
     SUPABASE_SERVICE_ROLE_KEY: SecretStr | None = None
     SUPABASE_JWT_SECRET: SecretStr | None = None
     DB_HEALTHCHECK_TIMEOUT_SECONDS: Annotated[float, Field(ge=0.1, le=30.0)] = 2.0
+    SCAN_RETENTION_DAYS: Annotated[int, Field(ge=0, le=3650)] = 90
 
     # LLM & AI Intelligence Configuration
     LLM_ENABLED: bool = False
@@ -60,9 +62,33 @@ class Settings(BaseSettings):
     LLM_TIMEOUT_SECONDS: Annotated[float, Field(ge=1.0, le=120.0)] = 12.0
     LLM_MAX_OUTPUT_TOKENS: Annotated[int, Field(ge=64, le=16384)] = 900
     AI_MAX_INPUT_CHARS: Annotated[int, Field(ge=100, le=50000)] = 4000
-    AI_MAX_RETRIES: Annotated[int, Field(ge=0, le=3)] = 1
+    AI_MAX_RETRIES: Annotated[int, Field(ge=0, le=5)] = 1
     AI_CIRCUIT_BREAKER_ENABLED: bool = False
     AI_CONCURRENCY_LIMIT: Annotated[int, Field(ge=1, le=20)] = 4
+
+    # Phase 08 Feature Flags
+    FEATURE_REPUTATION: bool = True
+    FEATURE_EMAIL_ANALYSIS: bool = True
+    FEATURE_BATCH: bool = True
+    FEATURE_EXPORT: bool = True
+    FEATURE_WATCHLISTS: bool = False
+    FEATURE_NOTIFICATIONS: bool = False
+    FEATURE_COLLABORATION: bool = False
+
+    # External Threat Reputation Configuration
+    GOOGLE_SAFE_BROWSING_API_KEY: SecretStr | None = None
+    VIRUSTOTAL_API_KEY: SecretStr | None = None
+    URLHAUS_AUTH_KEY: SecretStr | None = None
+    REPUTATION_CACHE_TTL_SECONDS: Annotated[int, Field(ge=60, le=86400)] = 21600
+    REPUTATION_TIMEOUT_SECONDS: Annotated[float, Field(ge=0.5, le=30.0)] = 4.0
+    REPUTATION_MAX_SCORE_CONTRIBUTION: Annotated[int, Field(ge=10, le=80)] = 40
+
+    # Batch Scanning Configuration
+    BATCH_MAX_ITEMS: Annotated[int, Field(ge=1, le=100)] = 25
+    BATCH_CONCURRENCY: Annotated[int, Field(ge=1, le=10)] = 3
+
+    # Email Analysis Configuration
+    EMAIL_MAX_BYTES: Annotated[int, Field(ge=1024, le=10485760)] = 1048576
 
     @field_validator("CORS_ALLOWED_ORIGINS", mode="before")
     @classmethod

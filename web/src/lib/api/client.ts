@@ -4,6 +4,7 @@
  */
 
 import { getApiBaseUrl } from '@/lib/config'
+import { supabase } from '@/lib/supabaseClient'
 import { ApiError, normalizeApiError } from './errors'
 
 export { CipherApiProvider, useCipherApi, CipherApiContext } from './provider'
@@ -59,6 +60,17 @@ export async function apiFetch<T>(
     }
     if (options.body && typeof options.body === 'string' && !headers.has('Content-Type')) {
       headers.set('Content-Type', 'application/json')
+    }
+
+    if (!headers.has('Authorization')) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.access_token) {
+          headers.set('Authorization', `Bearer ${session.access_token}`)
+        }
+      } catch {
+        // Fall back gracefully to guest mode if session is inaccessible
+      }
     }
 
     const response = await fetch(targetUrl, {

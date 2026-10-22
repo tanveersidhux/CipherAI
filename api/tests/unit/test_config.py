@@ -8,7 +8,7 @@ from app.core.config import Settings
 
 def test_development_defaults() -> None:
     """Verify default configuration values in development mode."""
-    settings = Settings(APP_ENV="development")
+    settings = Settings(_env_file=None, APP_ENV="development")
     assert settings.APP_ENV == "development"
     assert settings.APP_VERSION == "1.0.0"
     assert settings.LOG_LEVEL == "INFO"

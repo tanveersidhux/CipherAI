@@ -57,5 +57,12 @@
     "duration_ms": 15,
     "ai_status": "disabled",
     "external_lookup_status": "not_attempted"
-  }
+  },
+  "scan_id": null,
+  "persistence_status": "not_saved_guest",
+  "saved_at": null,
+  "reputation_results": null,
+  "email_summary": null,
+  "extracted_urls": null,
+  "attachments": null
 }

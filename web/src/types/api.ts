@@ -11,6 +11,27 @@ export type {
 } from '@/lib/api/errors'
 export { ApiError } from '@/lib/api/errors'
 
+export * from './history'
+export * from './dashboard'
+export * from './cases'
+
+import type {
+  ListScansParams,
+  ListScansResponse,
+  ScanSummaryItem,
+  UpdateScanParams,
+} from './history'
+import type { DashboardSummaryResponse } from './dashboard'
+import type {
+  CaseDetailResponse,
+  CaseNoteResponse,
+  CaseResponse,
+  CreateCaseParams,
+  ListCasesResponse,
+  UpdateCaseParams,
+} from './cases'
+
+// Backward-compatible ScanSummary alias
 export interface ScanSummary {
   id: string
   scan_type: ScanType
@@ -20,6 +41,7 @@ export interface ScanSummary {
   created_at: string
 }
 
+// Backward-compatible DashboardSummary alias
 export interface DashboardSummary {
   total_scans: number
   by_risk_level: Record<RiskLevel, number>
@@ -53,27 +75,27 @@ export interface ScanMessageInput {
   }
 }
 
-export interface ListScansParams {
-  limit?: number
-  cursor?: string
-  risk_level?: string
-  scan_type?: string
-}
-
-export interface ListScansResponse {
-  items: ScanSummary[]
-  next_cursor: string | null
-}
-
 /**
  * Core CIPHER AI Data Access Interface.
- * Implemented by MockCipherApi in Phase 02 and HttpCipherApi in Phase 06.
  */
 export interface CipherApi {
   scanUrl(input: ScanUrlInput): Promise<ThreatReport>
   scanMessage(input: ScanMessageInput): Promise<ThreatReport>
   listScans(params?: ListScansParams): Promise<ListScansResponse>
   getScan(scanId: string): Promise<ThreatReport>
+  updateScan?(scanId: string, params: UpdateScanParams): Promise<ScanSummaryItem>
   deleteScan(scanId: string): Promise<void>
-  getDashboardSummary(): Promise<DashboardSummary>
+  getDashboardSummary(rangeDays?: number): Promise<DashboardSummaryResponse>
+
+  // Cases and Notes
+  listCases?(params?: { status?: string; limit?: number; cursor?: string }): Promise<ListCasesResponse>
+  getCase?(caseId: string): Promise<CaseDetailResponse>
+  createCase?(params: CreateCaseParams): Promise<CaseResponse>
+  updateCase?(caseId: string, params: UpdateCaseParams): Promise<CaseResponse>
+  deleteCase?(caseId: string): Promise<void>
+  attachScan?(caseId: string, scanId: string): Promise<{ case_id: string; scan_id: string }>
+  detachScan?(caseId: string, scanId: string): Promise<void>
+  addNote?(caseId: string, body: string): Promise<CaseNoteResponse>
+  updateNote?(caseId: string, noteId: string, body: string): Promise<CaseNoteResponse>
+  deleteNote?(caseId: string, noteId: string): Promise<void>
 }

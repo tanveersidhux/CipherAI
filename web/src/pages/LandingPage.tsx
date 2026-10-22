@@ -111,7 +111,7 @@ export default function LandingPage() {
                   <span>{new Date(scan.created_at).toLocaleDateString()}</span>
                 </div>
                 <p className="font-mono text-xs text-foreground truncate group-hover:text-primary transition-colors">
-                  {scan.display_value}
+                  {scan.title || scan.input_preview || scan.display_value}
                 </p>
                 <div className="flex items-center justify-between pt-1">
                   <RiskBadge level={scan.risk_level} size="sm" />

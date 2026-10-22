@@ -1,20 +1,26 @@
 import React from 'react'
-import { History, Search, Filter } from 'lucide-react'
+import { History, Search, Filter, Bookmark, Loader2 } from 'lucide-react'
 import { useScanHistory } from '@/hooks/useScanHistory'
 import { ScanHistoryTable } from '@/components/common/ScanHistoryTable'
 import { LoadingSkeleton } from '@/components/common/LoadingSkeleton'
 import { ErrorState } from '@/components/common/ErrorState'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 export default function HistoryPage() {
   const {
     items,
     loading,
+    loadingMore,
+    hasMore,
+    loadMore,
     error,
     riskFilter,
     setRiskFilter,
     typeFilter,
     setTypeFilter,
+    pinnedFilter,
+    setPinnedFilter,
     searchQuery,
     setSearchQuery,
     deleteScan,
@@ -33,7 +39,7 @@ export default function HistoryPage() {
             Scan History
           </h1>
           <p className="text-sm text-muted-foreground">
-            Review past URL and message threat assessments recorded in this session.
+            Review past URL and message threat assessments recorded in your secure account.
           </p>
         </div>
       </div>
@@ -51,7 +57,7 @@ export default function HistoryPage() {
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1.5 shrink-0">
             <Filter className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
             <select
@@ -79,6 +85,18 @@ export default function HistoryPage() {
             <option value="url">URL</option>
             <option value="message">Message</option>
           </select>
+
+          <Button
+            type="button"
+            variant={pinnedFilter ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setPinnedFilter(pinnedFilter ? null : true)}
+            className="h-10 text-xs gap-1.5"
+            title="Filter by pinned items"
+          >
+            <Bookmark className="h-3.5 w-3.5" />
+            Pinned
+          </Button>
         </div>
       </div>
 
@@ -87,7 +105,30 @@ export default function HistoryPage() {
       ) : error ? (
         <ErrorState error={error} onRetry={refetch} />
       ) : (
-        <ScanHistoryTable items={items} onDelete={deleteScan} />
+        <div className="space-y-4">
+          <ScanHistoryTable items={items as any} onDelete={deleteScan} />
+
+          {hasMore && (
+            <div className="flex justify-center pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadMore}
+                disabled={loadingMore}
+                className="gap-2 text-xs h-9 min-w-[120px]"
+              >
+                {loadingMore ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  'Load More Scans'
+                )}
+              </Button>
+            </div>
+          )}
+        </div>
       )}
     </div>
   )

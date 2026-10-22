@@ -84,3 +84,7 @@ jobs:
           APP_ENV: test
           LOG_LEVEL: WARNING
         run: pytest --cov=app --cov-report=term-missing
+
+      - name: Audit Supabase Row-Level Security (RLS)
+        working-directory: .
+        run: python scripts/audit_rls.py

@@ -1,10 +1,11 @@
 import type {
   CipherApi,
-  DashboardSummary,
+  DashboardSummaryResponse,
+  ListCasesResponse,
   ListScansParams,
   ListScansResponse,
   ScanMessageInput,
-  ScanSummary,
+  ScanSummaryItem,
   ScanUrlInput,
 } from '@/types/api'
 import { ApiError } from '@/types/api'
@@ -142,12 +143,16 @@ export class MockCipherApi implements CipherApi {
   async listScans(params?: ListScansParams): Promise<ListScansResponse> {
     await this.delay()
 
-    let items: ScanSummary[] = Array.from(this.reports.values()).map((r) => ({
+    let items: ScanSummaryItem[] = Array.from(this.reports.values()).map((r) => ({
       id: r.report_id,
       scan_type: r.scan_type,
+      title: r.input.display_value,
+      input_preview: r.input.display_value,
       display_value: r.input.display_value,
       risk_score: r.assessment.risk_score,
       risk_level: r.assessment.risk_level,
+      is_pinned: false,
+      tags: [],
       created_at: r.created_at,
     }))
 
@@ -160,7 +165,7 @@ export class MockCipherApi implements CipherApi {
       items = items.filter((item) => item.risk_level === params.risk_level)
     }
 
-    if (params?.scan_type && params.scan_type !== 'all') {
+    if (params?.scan_type && (params.scan_type as string) !== 'all') {
       items = items.filter((item) => item.scan_type === params.scan_type)
     }
 
@@ -202,77 +207,73 @@ export class MockCipherApi implements CipherApi {
     this.reports.delete(scanId)
   }
 
-  async getDashboardSummary(): Promise<DashboardSummary> {
+  async getDashboardSummary(_rangeDays = 30): Promise<DashboardSummaryResponse> {
     await this.delay()
 
     const allReports = Array.from(this.reports.values())
-    const by_risk_level: Record<RiskLevel, number> = {
+    const riskCounts: Record<string, number> = {
       low: 0,
       medium: 0,
       high: 0,
       critical: 0,
       inconclusive: 0,
     }
-    const by_scan_type: Record<string, number> = {
-      url: 0,
-      message: 0,
-      email: 0,
-      batch_item: 0,
-    }
 
     for (const report of allReports) {
-      by_risk_level[report.assessment.risk_level] =
-        (by_risk_level[report.assessment.risk_level] ?? 0) + 1
-      by_scan_type[report.scan_type] =
-        (by_scan_type[report.scan_type] ?? 0) + 1
+      riskCounts[report.assessment.risk_level] =
+        (riskCounts[report.assessment.risk_level] ?? 0) + 1
     }
 
-    const recent_scans: ScanSummary[] = allReports.slice(0, 5).map((r) => ({
+    const recent_scans: ScanSummaryItem[] = allReports.slice(0, 5).map((r) => ({
       id: r.report_id,
       scan_type: r.scan_type,
+      title: r.input.display_value,
+      input_preview: r.input.display_value,
       display_value: r.input.display_value,
       risk_score: r.assessment.risk_score,
       risk_level: r.assessment.risk_level,
+      is_pinned: false,
+      tags: [],
       created_at: r.created_at,
     }))
 
+    const high_or_critical = (riskCounts['high'] || 0) + (riskCounts['critical'] || 0)
+
     return {
-      total_scans: allReports.length,
-      by_risk_level,
-      by_scan_type,
+      totals: {
+        total_scans: allReports.length,
+        scans_last_7_days: allReports.length,
+        high_or_critical_scans: high_or_critical,
+        inconclusive_scans: riskCounts['inconclusive'] || 0,
+        open_cases: 0,
+      },
+      risk_distribution: Object.entries(riskCounts).map(([risk_level, count]) => ({
+        risk_level,
+        count,
+      })),
+      scans_over_time: [
+        { date: '2026-10-16', count: 3, high_or_critical: 1 },
+        { date: '2026-10-17', count: 5, high_or_critical: 2 },
+        { date: '2026-10-18', count: 2, high_or_critical: 0 },
+        { date: '2026-10-19', count: 7, high_or_critical: 3 },
+        { date: '2026-10-20', count: 9, high_or_critical: 4 },
+        { date: '2026-10-21', count: 6, high_or_critical: 2 },
+        { date: '2026-10-22', count: 12, high_or_critical: 5 },
+      ],
+      top_indicator_categories: [
+        { category: 'network_evasion', count: 14 },
+        { category: 'credential_theft', count: 11 },
+        { category: 'social_engineering', count: 8 },
+        { category: 'homoglyph_spoofing', count: 5 },
+      ],
       recent_scans,
-      top_indicators: [
-        {
-          indicator_id: 'URL_IP_HOST',
-          title: 'IP Address Used as Hostname',
-          count: 14,
-        },
-        {
-          indicator_id: 'URL_CREDENTIAL_PATH_KEYWORD',
-          title: 'Credential Keywords in Path',
-          count: 11,
-        },
-        {
-          indicator_id: 'MSG_URGENCY_DEADLINE',
-          title: 'Artificial Urgency or Strict Deadline',
-          count: 8,
-        },
-        {
-          indicator_id: 'URL_HOMOGLYPH_CYRILLIC',
-          title: 'Cyrillic Homoglyph Characters',
-          count: 5,
-        },
-      ],
-      time_series: [
-        { date: '2026-10-16', count: 3 },
-        { date: '2026-10-17', count: 5 },
-        { date: '2026-10-18', count: 2 },
-        { date: '2026-10-19', count: 7 },
-        { date: '2026-10-20', count: 9 },
-        { date: '2026-10-21', count: 6 },
-        { date: '2026-10-22', count: 12 },
-      ],
+      generated_at: new Date().toISOString(),
     }
+  }
+
+  async listCases(_params?: { status?: string; limit?: number; cursor?: string }): Promise<ListCasesResponse> {
+    await this.delay()
+    return { items: [], next_cursor: null }
   }
 
   private persistAndReturn(report: ThreatReport): ThreatReport {

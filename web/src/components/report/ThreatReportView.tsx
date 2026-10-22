@@ -29,7 +29,12 @@ import { ExplanationPanel } from '@/components/report/ExplanationPanel'
 import { useExplanation } from '@/hooks/useExplanation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { PersistenceStatusBanner } from '@/components/common/PersistenceStatusBanner'
+import { SaveToCaseDialog } from '@/components/cases/SaveToCaseDialog'
 import { getRiskDescription } from '@/lib/risk'
+import { ExportMenu } from '@/components/report/ExportMenu'
+import { ReputationCard } from '@/components/report/ReputationCard'
+import { EmailFindingsCard } from '@/components/report/EmailFindingsCard'
 
 export interface ThreatReportViewProps {
   report: ThreatReport
@@ -38,12 +43,17 @@ export interface ThreatReportViewProps {
 }
 
 export function ThreatReportView({
-  report,
+  report: initialReport,
   onScanAgain,
   className = '',
 }: ThreatReportViewProps) {
+  const [report, setReport] = useState<ThreatReport>(initialReport)
   const [highlightedIndicatorId, setHighlightedIndicatorId] = useState<string | null>(null)
   const explanationHook = useExplanation()
+
+  useEffect(() => {
+    setReport(initialReport)
+  }, [initialReport])
 
   // Asynchronously request explanation once report is rendered
   useEffect(() => {
@@ -66,6 +76,13 @@ export function ThreatReportView({
       className={`space-y-8 max-w-4xl mx-auto py-2 ${className}`}
       aria-labelledby="report-heading"
     >
+      {/* Persistence Status Notification */}
+      <PersistenceStatusBanner
+        status={report.persistence_status}
+        scanId={report.scan_id || report.report_id}
+        className="no-print"
+      />
+
       {/* Action Toolbar */}
       <div className="flex items-center justify-between no-print">
         {onScanAgain ? (
@@ -84,17 +101,11 @@ export function ThreatReportView({
         )}
 
         <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handlePrint}
-            className="text-xs gap-1.5 min-h-[36px]"
-            title="Print or export report to PDF"
-          >
-            <Printer className="h-3.5 w-3.5" />
-            <span>Print Report</span>
-          </Button>
+          <SaveToCaseDialog scanId={report.scan_id || report.report_id} />
+          <ExportMenu
+            scanId={report.scan_id || report.report_id}
+            targetName={`scan-${(report.scan_id || report.report_id).slice(0, 8)}`}
+          />
         </div>
       </div>
 
@@ -196,6 +207,15 @@ export function ThreatReportView({
           </p>
         </section>
       )}
+
+      {/* Email-specific deep analysis card */}
+      <EmailFindingsCard report={report} />
+
+      {/* External threat intelligence feeds */}
+      <ReputationCard
+        report={report}
+        onReputationRefreshed={(updated) => setReport(updated)}
+      />
 
       {/* 4. Mandatory Disclaimer Banner */}
       <section aria-label="Disclaimer">

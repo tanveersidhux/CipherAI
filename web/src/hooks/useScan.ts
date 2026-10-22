@@ -6,7 +6,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import type { ThreatReport } from '@/types/threat-report'
 import { ApiError, normalizeApiError } from '@/lib/api/errors'
-import { scanUrl, scanMessage, type ScanUrlParams, type ScanMessageParams } from '@/lib/api/scan'
+import type { ScanUrlParams, ScanMessageParams } from '@/lib/api/scan'
 import { useScanSession } from '@/context/ScanSessionProvider'
 
 import { useCipherApi } from '@/lib/api/client'

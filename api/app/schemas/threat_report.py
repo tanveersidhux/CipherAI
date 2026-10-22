@@ -1,6 +1,7 @@
 """Pydantic v2 models strictly mirroring docs/api/schemas/*.json."""
 
 from enum import Enum
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -178,3 +179,14 @@ class ThreatReport(StrictBaseModel):
     recommended_actions: list[RecommendedAction]
     engine_version: str
     processing: Processing
+
+    # Phase 07 Persistence fields (backward-compatible defaults)
+    scan_id: str | None = None
+    persistence_status: Literal["saved", "not_saved_guest", "save_failed"] = "not_saved_guest"
+    saved_at: str | None = None
+
+    # Phase 08 Advanced Capabilities fields
+    reputation_results: list[dict] | None = None
+    email_summary: dict | None = None
+    extracted_urls: list[dict] | None = None
+    attachments: list[dict] | None = None

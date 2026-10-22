@@ -20,6 +20,16 @@
     "processing"
   ],
   "properties": {
+    "scan_id": {
+      "type": ["string", "null"]
+    },
+    "persistence_status": {
+      "type": "string",
+      "enum": ["saved", "not_saved_guest", "save_failed"]
+    },
+    "saved_at": {
+      "type": ["string", "null"]
+    },
     "report_id": {
       "type": "string",
       "format": "uuid"
@@ -175,7 +185,20 @@
         }
       },
       "additionalProperties": false
+    },
+    "reputation_results": {
+      "type": ["array", "null"]
+    },
+    "email_summary": {
+      "type": ["object", "null"]
+    },
+    "extracted_urls": {
+      "type": ["array", "null"]
+    },
+    "attachments": {
+      "type": ["array", "null"]
     }
   },
   "additionalProperties": false
 }
+
