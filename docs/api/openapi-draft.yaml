@@ -22,7 +22,7 @@ paths:
         - System
       responses:
         '200':
-          description: Service is healthy.
+          description: Service process is operational and accepting traffic. Dependency states (database, LLM) are reported within the response payload.
           headers:
             X-Request-ID:
               $ref: '#/components/headers/X-Request-ID'
@@ -30,8 +30,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
-        '503':
-          description: Service or critical dependency unavailable.
+        '500':
+          description: Internal error processing health check.
           content:
             application/json:
               schema:

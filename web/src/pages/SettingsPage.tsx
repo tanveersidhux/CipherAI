@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
 import { CopyButton } from '@/components/common/CopyButton'
+import { ConnectionStatus } from '@/components/common/ConnectionStatus'
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme()
@@ -46,6 +47,9 @@ export default function SettingsPage() {
           Manage interface appearance, examine session metadata, and view privacy guarantees.
         </p>
       </div>
+
+      {/* Backend API Connection Status (FR-P03-09) */}
+      <ConnectionStatus />
 
       {/* Theme Selection */}
       <Card className="border-border/60 bg-card/70">

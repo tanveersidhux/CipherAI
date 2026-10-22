@@ -3,48 +3,65 @@
 > **Tagline:** Understand threats. Protect what matters.
 
 ## Product Summary
-CIPHER AI is an AI-assisted digital security and threat intelligence web application. Users submit suspicious URLs, scam messages, and later emails to receive an evidence-based, explainable risk assessment, a plain-language AI explanation, prioritized recommended actions, and a private scan history with investigation tooling. The core architecture pairs a deterministic security engine (offline lexical rules and transparent category caps) with a bounded AI threat intelligence analyst (strict schema validation and deterministic fallback).
+CIPHER AI is an AI-assisted digital security and threat intelligence platform. Users submit suspicious URLs and scam messages to receive an evidence-based, explainable risk assessment, a plain-language AI explanation, prioritized recommended actions, and private scan history. The core architecture pairs a deterministic security engine (offline lexical heuristics and transparent category caps) with a bounded AI threat intelligence analyst (strict schema validation and deterministic fallback).
 
 ---
 
-## Current Status: Phase 02 (Frontend Foundation & UI/UX Design System)
-> **Notice:** **PHASE_01** (Specification & Technical Architecture) and **PHASE_02** (UI/UX Design System, Page Layouts, Navigation, Reusable Components, Responsive Design, and Mock-Driven Frontend Shell) are delivered. The `web/` application shell is fully operational and verified with typed mock fixtures mirroring Phase 01 schemas. Phase 03 will scaffold the FastAPI backend and database while verifying this existing frontend foundation per ADR-0006.
+## Project Phase Roadmap & Status
+
+| Phase | Description | Status | Report / Spec |
+| :--- | :--- | :--- | :--- |
+| **PHASE 01** | Specification, Schemas, Scoring Spec, Threat Model, Architecture | **COMPLETE** | [PHASE_01_REPORT.md](file:///docs/phase-reports/PHASE_01_REPORT.md) |
+| **PHASE 02** | UI/UX Design System, Page Layouts, Accessible Components, Web Shell | **COMPLETE** | [PHASE_02_REPORT.md](file:///docs/phase-reports/PHASE_02_REPORT.md) |
+| **PHASE 03** | Monorepo Scaffolding, FastAPI Foundation, Database Migration, Health API | **COMPLETE** | [PHASE_03_REPORT.md](file:///docs/phase-reports/PHASE_03_REPORT.md) |
+| **PHASE 04** | Core Security Engine, Lexical URL/Message Analysis, Risk Scoring | *NEXT* | [risk-scoring-spec.md](file:///docs/architecture/risk-scoring-spec.md) |
+| **PHASE 05** | Bounded AI Intelligence, Structured Prompts, Schema Validation | *PLANNED* | [ai-spec.md](file:///docs/architecture/ai-spec.md) |
+| **PHASE 06** | Real Scan Endpoints, Scanning Workflows, Mock Replacement | *PLANNED* | [api-contracts.md](file:///docs/api/api-contracts.md) |
+| **PHASE 07** | Persistence Layer, Anonymous Sessions, History, Dashboard Telemetry | *PLANNED* | [data-model.md](file:///docs/architecture/data-model.md) |
 
 ---
 
-## Frontend Development (`web/`)
+## Quick Start (Clone to Running in Under 15 Minutes)
 
-CIPHER AI features an accessible, responsive, dark/light themed React single-page application built on Vite, TypeScript (strict), Tailwind CSS, and shadcn/ui primitives.
+For a comprehensive guide, see [Local Development Guide](file:///docs/setup/local-development.md).
 
-### Prerequisites
-- Node.js LTS (v20+ recommended)
-- `npm`
-
-### Quick Start
+### 1. Backend API (`api/`)
 ```bash
-# Navigate to web application directory
+cd api
+python -m venv .venv
+
+# Activate virtualenv (Windows: .\.venv\Scripts\Activate.ps1 | Linux/macOS: source .venv/bin/activate)
+pip install -r requirements-dev.txt
+
+# Start backend server
+uvicorn app.main:app --reload --port 8000
+```
+- API Base: `http://localhost:8000`
+- Health Check: `http://localhost:8000/api/v1/health`
+- Interactive Docs (Dev only): `http://localhost:8000/docs`
+
+### 2. Frontend Client (`web/`)
+```bash
 cd web
-
-# Install dependencies
-npm install
-
-# Run local development server
+npm ci
 npm run dev
+```
+- Web Application: `http://localhost:5173`
+- Connection Status: Accessible from the Settings page
 
-# Run strict TypeScript typecheck
-npm run typecheck
+### 3. Run All Automated Verification
+```bash
+# Frontend checks
+cd web
+npm run lint && npm run typecheck && npm run test && npm run build
 
-# Run linter
-npm run lint
+# Backend checks
+cd ../api
+ruff check . && ruff format --check . && pytest --cov=app
 
-# Run Vitest test suite
-npm test
-
-# Run tests with coverage
-npm run test:coverage
-
-# Build for production
-npm run build
+# Secret scan
+cd ..
+node scripts/check-no-secrets-in-web.mjs
 ```
 
 ---
@@ -62,20 +79,28 @@ npm run build
 
 ### 2. Architecture & Design
 - [System Architecture](file:///docs/architecture/architecture.md)
+- [Backend Foundation Architecture](file:///docs/architecture/backend-foundation.md)
 - [Risk-Scoring Specification & Indicator Catalog](file:///docs/architecture/risk-scoring-spec.md)
 - [AI Safety and Explanation Specification](file:///docs/architecture/ai-spec.md)
 - [Data Model & Persistence Specification](file:///docs/architecture/data-model.md)
 - [Draft Database Schema (SQL)](file:///docs/architecture/schema-draft.sql)
+- [Threat Model & Security Mitigation](file:///docs/security/threat-model.md)
 
-### 3. Architecture Decision Records (ADRs)
+### 3. Setup & Development Guides
+- [Local Development Guide](file:///docs/setup/local-development.md)
+- [Database Setup & Migration Guide](file:///docs/setup/database-setup.md)
+- [Contributing & PR Guidelines](file:///CONTRIBUTING.md)
+
+### 4. Architecture Decision Records (ADRs)
 - [ADR-0001: Initial Architecture Selection](file:///docs/adr/ADR-0001-initial-architecture.md)
 - [ADR-0002: Deterministic-First Risk Scoring](file:///docs/adr/ADR-0002-deterministic-first-scoring.md)
 - [ADR-0003: No Backend Fetching of Submitted URLs in MVP](file:///docs/adr/ADR-0003-no-backend-fetching-in-mvp.md)
 - [ADR-0004: Anonymous Session Isolation Prior to User Authentication](file:///docs/adr/ADR-0004-anonymous-session-before-auth.md)
 - [ADR-0005: Strict Schema Validation and Rejection Policy for AI Outputs](file:///docs/adr/ADR-0005-ai-output-schema-validation.md)
 - [ADR-0006: Frontend Foundation in Phase 02](file:///docs/adr/ADR-0006-frontend-foundation-in-phase-02.md)
+- [ADR-0007: Backend Foundation Extensions and Reconciliations](file:///docs/adr/ADR-0007-backend-foundation-extensions.md)
 
-### 4. UI/UX Design System & Specification (Phase 02)
+### 5. UI/UX Design System (Phase 02)
 - [Design Principles & Visual Identity](file:///docs/design/design-principles.md)
 - [Design Tokens & Contrast Audit](file:///docs/design/tokens.md)
 - [Information Architecture & Navigation Sitemap](file:///docs/design/information-architecture.md)
@@ -86,8 +111,8 @@ npm run build
 - [Accessibility Specification & Audit (WCAG 2.1 AA)](file:///docs/design/accessibility.md)
 - [Frontend Security Notes & Safe Rendering](file:///docs/design/frontend-security-notes.md)
 
-### 5. API Contracts & Schemas
-- [OpenAPI 3.1 Draft Contract (YAML)](file:///docs/api/openapi-draft.yaml)
+### 6. API Contracts & Schemas
+- [OpenAPI 3.1 Contract (YAML)](file:///docs/api/openapi-draft.yaml)
 - [Human-Readable API Contracts](file:///docs/api/api-contracts.md)
 - [JSON Schemas](file:///docs/api/schemas/)
   - [ThreatReport Schema](file:///docs/api/schemas/threat-report.schema.json)
@@ -99,8 +124,7 @@ npm run build
   - [ErrorEnvelope Schema](file:///docs/api/schemas/error-envelope.schema.json)
   - [Example ThreatReport JSON](file:///docs/api/schemas/examples/threat-report.example.json)
 
-### 6. Security, Testing & Phase Reports
-- [Threat and Abuse Model](file:///docs/security/threat-model.md)
-- [Testing & QA Strategy (Traceability Matrix)](file:///docs/testing/test-strategy.md)
-- [Phase 01 Completion Report](file:///docs/phase-reports/PHASE_01_REPORT.md)
-- [Phase 02 Completion Report](file:///docs/phase-reports/PHASE_02_REPORT.md)
+### 7. Phase Completion Reports
+- [PHASE 01 Completion Report](file:///docs/phase-reports/PHASE_01_REPORT.md)
+- [PHASE 02 Completion Report](file:///docs/phase-reports/PHASE_02_REPORT.md)
+- [PHASE 03 Completion Report](file:///docs/phase-reports/PHASE_03_REPORT.md)

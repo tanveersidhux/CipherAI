@@ -19,14 +19,16 @@ build/
 .next/
 out/
 web/dist/
+*.tsbuildinfo
 
-# Testing & Coverage
+# Testing, Linting & Coverage
 coverage/
 .coverage
 .coverage.*
 htmlcov/
 .pytest_cache/
 .vitest_cache/
+.ruff_cache/
 web/coverage/
 
 # IDE and System Files
@@ -46,3 +48,5 @@ pnpm-debug.log*
 
 # Supabase Local
 .supabase/
+supabase/.branches/
+supabase/.temp/

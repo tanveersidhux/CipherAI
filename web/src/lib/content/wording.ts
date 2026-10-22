@@ -54,9 +54,24 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   UNAUTHENTICATED: 'Your current session could not be authenticated. A new anonymous session has been initiated.',
   FORBIDDEN: 'You do not have permission to view or modify this scan.',
   NOT_FOUND: 'The requested threat report could not be found or has been deleted.',
+  METHOD_NOT_ALLOWED: 'The requested HTTP method is not supported for this endpoint.',
   RATE_LIMITED: 'Rate limit reached. Please wait a moment before running another scan.',
   DEPENDENCY_UNAVAILABLE: 'The CIPHER AI scanning engine is temporarily unreachable. Your input has been preserved.',
   INTERNAL_ERROR: 'An unexpected processing error occurred while analyzing the target. Please try again.',
+}
+
+export const CONNECTION_STATUS_LABELS = {
+  backendReachable: 'Backend reachable',
+  backendUnreachable: 'Backend unreachable',
+  checking: 'Checking connection...',
+  retry: 'Retry',
+  usingDevFallback: 'Using development fallback (http://localhost:8000).',
+  dbOk: 'Database operational',
+  dbUnavailable: 'Database unreachable',
+  dbNotConfigured: 'Database not configured (offline mode)',
+  llmEnabled: 'AI assistance operational',
+  llmDisabled: 'AI assistance disabled',
+  llmNotConfigured: 'AI API key not configured',
 }
 
 export const EMPTY_STATES = {

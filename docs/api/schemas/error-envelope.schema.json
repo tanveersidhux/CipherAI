@@ -27,6 +27,7 @@
             "FORBIDDEN",
             "NOT_FOUND",
             "RATE_LIMITED",
+            "METHOD_NOT_ALLOWED",
             "DEPENDENCY_UNAVAILABLE",
             "INTERNAL_ERROR"
           ],

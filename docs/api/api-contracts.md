@@ -55,6 +55,7 @@ All non-2xx responses conform strictly to the following schema:
 | **401** | `UNAUTHENTICATED` | Missing or invalid session identifier or JWT token. |
 | **403** | `FORBIDDEN` | Caller does not own the requested scan or case resource. |
 | **404** | `NOT_FOUND` | Specified scan ID or case ID not found or already deleted. |
+| **405** | `METHOD_NOT_ALLOWED` | HTTP method not supported for the requested route. |
 | **429** | `RATE_LIMITED` | Scan request frequency limit exceeded. |
 | **503** | `DEPENDENCY_UNAVAILABLE` | Database connection failure or required backend subsystem down. |
 | **500** | `INTERNAL_ERROR` | Unhandled server exception. Sanitized safe message displayed to user. |
