@@ -123,7 +123,7 @@ The demo showcases five distinct scenarios using **synthetic, non-functional tar
 
 ## 6. Document Cross-References
 
-- [Scope Matrix](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/scope-matrix.md)
-- [Risk Register](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/risk-register.md)
-- [Testing & QA Strategy](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/testing/test-strategy.md)
-- [Risk Scoring Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/risk-scoring-spec.md)
+- [Scope Matrix](file:///docs/requirements/scope-matrix.md)
+- [Risk Register](file:///docs/requirements/risk-register.md)
+- [Testing & QA Strategy](file:///docs/testing/test-strategy.md)
+- [Risk Scoring Specification](file:///docs/architecture/risk-scoring-spec.md)

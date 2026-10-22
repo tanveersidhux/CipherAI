@@ -103,7 +103,7 @@ This matrix maps every MVP User Story (`US-001` through `US-015`) to its specifi
 
 ## 6. Document Cross-References
 
-- [User Stories](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/user-stories.md)
-- [Non-Functional Requirements](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/non-functional-requirements.md)
-- [Threat and Abuse Model](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/security/threat-model.md)
-- [Risk Scoring Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/risk-scoring-spec.md)
+- [User Stories](file:///docs/requirements/user-stories.md)
+- [Non-Functional Requirements](file:///docs/requirements/non-functional-requirements.md)
+- [Threat and Abuse Model](file:///docs/security/threat-model.md)
+- [Risk Scoring Specification](file:///docs/architecture/risk-scoring-spec.md)

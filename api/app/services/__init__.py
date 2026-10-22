@@ -1,1 +1,1 @@
-"""Business Services package (Reserved)."""
+"""Application business services."""

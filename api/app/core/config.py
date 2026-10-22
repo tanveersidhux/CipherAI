@@ -38,7 +38,8 @@ class Settings(BaseSettings):
     RATE_LIMIT_SCANS_PER_MINUTE: Annotated[int, Field(ge=1, le=1000)] = 30
     MAX_MESSAGE_CHARS: Annotated[int, Field(ge=100, le=100000)] = 5000
     MAX_URL_CHARS: Annotated[int, Field(ge=10, le=10000)] = 2048
-    MAX_REQUEST_BODY_BYTES: Annotated[int, Field(ge=1024, le=10000000)] = 20000
+    MAX_REQUEST_BODY_BYTES: Annotated[int, Field(ge=1024, le=10000000)] = 32768
+    TRUST_PROXY_HEADERS: bool = False
 
     # API Documentation Control (ADR-0007)
     ENABLE_API_DOCS: bool | None = None

@@ -1,0 +1,131 @@
+{
+  "report_id": "11111111-1111-4111-8111-111111111103",
+  "schema_version": "1.0",
+  "scan_type": "url",
+  "created_at": "2026-10-22T12:00:00Z",
+  "input": {
+    "display_value": "hxxps://admin:pass@short[.]example[.]test/auth",
+    "normalized_value": "https://admin:pass@short.example.test/auth",
+    "input_hash": "8bd21841e3c86d5a1b552d0ecc409900c33a71549bb7709ff68c1ef25478340d",
+    "input_length": 42
+  },
+  "assessment": {
+    "risk_score": 60,
+    "risk_level": "high",
+    "confidence": "medium",
+    "verdict_label": "High risk indicators identified",
+    "limitations": [
+      "The destination page was not fetched or inspected.",
+      "No reputation databases were consulted.",
+      "Results are based purely on offline lexical, syntactic, and structural heuristics."
+    ]
+  },
+  "indicators": [
+    {
+      "indicator_id": "URL_USERINFO_PRESENT",
+      "category": "url_structure",
+      "evidence_kind": "observed",
+      "title": "Embedded Userinfo Credential (@ Symbol)",
+      "description": "URL authority component contains an '@' delimiter, often used to mislead users regarding the actual destination host.",
+      "observed_value": "admin:pass",
+      "severity": "critical",
+      "triggered": true
+    },
+    {
+      "indicator_id": "URL_CREDENTIAL_PATH_KEYWORD",
+      "category": "credential_lure",
+      "evidence_kind": "inferred",
+      "title": "Credential Keywords in Path",
+      "description": "URL path targets sensitive authentication or account-recovery workflows (e.g., /login, /verify, /banking).",
+      "observed_value": "auth",
+      "severity": "high",
+      "triggered": true
+    }
+  ],
+  "score_breakdown": [
+    {
+      "indicator_id": "URL_USERINFO_PRESENT",
+      "points": 35,
+      "reason": "Embedded Userinfo Credential (@ Symbol) detected in input (+35 pts).",
+      "evidence_kind": "observed",
+      "capped": false
+    },
+    {
+      "indicator_id": "URL_CREDENTIAL_PATH_KEYWORD",
+      "points": 25,
+      "reason": "Credential Keywords in Path detected in input (+25 pts).",
+      "evidence_kind": "inferred",
+      "capped": false
+    }
+  ],
+  "external_evidence": [],
+  "ai_explanation": {
+    "summary": "CIPHER AI detected high-risk deceptive patterns resulting in a risk score of 60/100. Multiple corroborated structural or lexical indicators suggest an intentional threat.",
+    "key_findings": [
+      {
+        "text": "Embedded Userinfo Credential (@ Symbol) (Severity.CRITICAL severity finding).",
+        "indicator_ids": [
+          "URL_USERINFO_PRESENT"
+        ]
+      },
+      {
+        "text": "Credential Keywords in Path (Severity.HIGH severity finding).",
+        "indicator_ids": [
+          "URL_CREDENTIAL_PATH_KEYWORD"
+        ]
+      }
+    ],
+    "user_guidance": "Exercise extreme caution. Verify the communication independently before taking any requested action.",
+    "uncertainty_notes": "Analysis was conducted offline without destination network fetching or real-time reputation database lookups. Novel zero-day campaigns or benign internal resources may not be fully represented.",
+    "generated_by": "deterministic_fallback",
+    "model": null,
+    "validated": true
+  },
+  "recommended_actions": [
+    {
+      "action_id": "ACT_DO_NOT_CLICK",
+      "priority": 1,
+      "text": "Do not click, navigate to, or open this link under any circumstances.",
+      "applies_to_levels": [
+        "high",
+        "critical"
+      ]
+    },
+    {
+      "action_id": "ACT_VERIFY_OFFICIAL_CHANNEL",
+      "priority": 2,
+      "text": "Independently verify the communication using official contact details retrieved from a trusted bookmark or statement.",
+      "applies_to_levels": [
+        "medium",
+        "high",
+        "critical",
+        "inconclusive"
+      ]
+    },
+    {
+      "action_id": "ACT_CHANGE_PASSWORDS",
+      "priority": 3,
+      "text": "If credentials were submitted, immediately reset your password and enable multi-factor authentication from a secure device.",
+      "applies_to_levels": [
+        "high",
+        "critical"
+      ]
+    },
+    {
+      "action_id": "ACT_REPORT_PHISHING",
+      "priority": 5,
+      "text": "Report the suspicious message or URL to your email/messaging provider and internal security department.",
+      "applies_to_levels": [
+        "medium",
+        "high",
+        "critical"
+      ]
+    }
+  ],
+  "engine_version": "1.0.0",
+  "processing": {
+    "duration_ms": 12,
+    "ai_status": "disabled",
+    "external_lookup_status": "not_attempted"
+  }
+}

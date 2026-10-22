@@ -1,0 +1,124 @@
+[
+  {
+    "example_id": 1,
+    "scan_type": "url",
+    "input": "http://192.0.2.14:8080/secure/login/verify.php",
+    "expected_indicators": [
+      "URL_IP_HOST",
+      "URL_NON_STANDARD_PORT",
+      "URL_NO_HTTPS",
+      "URL_CREDENTIAL_PATH_KEYWORD"
+    ],
+    "expected_score": 85,
+    "expected_level": "critical",
+    "expected_confidence": "high"
+  },
+  {
+    "example_id": 2,
+    "scan_type": "url",
+    "input": "https://xn--pypal-4ve.com/account-verification",
+    "expected_indicators": [
+      "URL_HOMOGLYPH_PUNYCODE",
+      "URL_CREDENTIAL_PATH_KEYWORD"
+    ],
+    "expected_score": 65,
+    "expected_level": "high",
+    "expected_confidence": "high"
+  },
+  {
+    "example_id": 3,
+    "scan_type": "url",
+    "input": "http://chase-security.online-banking-portal.top/login",
+    "expected_indicators": [
+      "URL_BRAND_IN_SUBDOMAIN",
+      "URL_SUSPICIOUS_TLD",
+      "URL_HYPHENS_IN_DOMAIN",
+      "URL_CREDENTIAL_PATH_KEYWORD",
+      "URL_NO_HTTPS"
+    ],
+    "expected_score": 95,
+    "expected_level": "critical",
+    "expected_confidence": "high"
+  },
+  {
+    "example_id": 4,
+    "scan_type": "url",
+    "input": "https://admin:pass@bit.ly/3x8Qz99",
+    "expected_indicators": [
+      "URL_USERINFO_PRESENT",
+      "URL_SHORTENER_DOMAIN"
+    ],
+    "expected_score": 55,
+    "expected_level": "high",
+    "expected_confidence": "medium"
+  },
+  {
+    "example_id": 5,
+    "scan_type": "url",
+    "input": "https://www.example.com/about/team",
+    "expected_indicators": [],
+    "expected_score": 0,
+    "expected_level": "low",
+    "expected_confidence": "low"
+  },
+  {
+    "example_id": 6,
+    "scan_type": "message",
+    "input": "URGENT: Your Wells Fargo account has been suspended due to unauthorized activity. You must verify within 24 hours at http://bit.ly/3abc to prevent permanent closure.",
+    "expected_indicators": [
+      "MSG_URGENCY_DEADLINE",
+      "MSG_ACCOUNT_CLOSURE_THREAT",
+      "MSG_BANK_IMPERSONATION",
+      "MSG_EMBEDDED_SHORT_LINK"
+    ],
+    "expected_score": 80,
+    "expected_level": "critical",
+    "expected_confidence": "high"
+  },
+  {
+    "example_id": 7,
+    "scan_type": "message",
+    "input": "USPS Notice: Your package could not be delivered due to an incorrect house number. Please update your details and pay the $1.99 redelivery fee: http://usps-parcel-tracking.top/update",
+    "expected_indicators": [
+      "MSG_DELIVERY_IMPERSONATION",
+      "MSG_SENDER_DOMAIN_MISMATCH",
+      "URL_SUSPICIOUS_TLD"
+    ],
+    "expected_score": 60,
+    "expected_level": "high",
+    "expected_confidence": "high"
+  },
+  {
+    "example_id": 8,
+    "scan_type": "message",
+    "input": "Hi Marcus, I am currently in a closed-door meeting and cannot take calls. I need you to urgently buy 5 $100 Apple gift cards for a client presentation and text me the codes right away.",
+    "expected_indicators": [
+      "MSG_URGENCY_DEADLINE",
+      "MSG_PAYMENT_GIFT_CARD"
+    ],
+    "expected_score": 55,
+    "expected_level": "high",
+    "expected_confidence": "medium"
+  },
+  {
+    "example_id": 9,
+    "scan_type": "message",
+    "input": "Google Security Alert: An unrecognized device logged into your account. To secure your account, reply with the 6-digit verification code we just sent to your phone.",
+    "expected_indicators": [
+      "MSG_OTP_PIN_REQUEST",
+      "MSG_TECH_SUPPORT_IMPERSONATION"
+    ],
+    "expected_score": 70,
+    "expected_level": "high",
+    "expected_confidence": "high"
+  },
+  {
+    "example_id": 10,
+    "scan_type": "message",
+    "input": "Hey",
+    "expected_indicators": [],
+    "expected_score": 0,
+    "expected_level": "inconclusive",
+    "expected_confidence": "low"
+  }
+]

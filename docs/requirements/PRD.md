@@ -113,8 +113,8 @@ The following features are designated as Post-MVP and are **explicitly not prere
 
 ## 8. Document Cross-References
 
-- [User Personas and Stories](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/user-stories.md)
-- [Scope Matrix](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/scope-matrix.md)
-- [Non-Functional Requirements](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/non-functional-requirements.md)
-- [Risk Scoring Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/risk-scoring-spec.md)
-- [System Architecture](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/architecture.md)
+- [User Personas and Stories](file:///docs/requirements/user-stories.md)
+- [Scope Matrix](file:///docs/requirements/scope-matrix.md)
+- [Non-Functional Requirements](file:///docs/requirements/non-functional-requirements.md)
+- [Risk Scoring Specification](file:///docs/architecture/risk-scoring-spec.md)
+- [System Architecture](file:///docs/architecture/architecture.md)

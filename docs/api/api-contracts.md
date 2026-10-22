@@ -318,7 +318,7 @@ Aggregates statistics for the user's active session or team workspace.
 
 ## 5. Document Cross-References
 
-- [OpenAPI 3.1 Draft Contract](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/api/openapi-draft.yaml)
-- [ThreatReport JSON Schema](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/api/schemas/threat-report.schema.json)
-- [ErrorEnvelope JSON Schema](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/api/schemas/error-envelope.schema.json)
-- [Threat and Abuse Model](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/security/threat-model.md)
+- [OpenAPI 3.1 Draft Contract](file:///docs/api/openapi-draft.yaml)
+- [ThreatReport JSON Schema](file:///docs/api/schemas/threat-report.schema.json)
+- [ErrorEnvelope JSON Schema](file:///docs/api/schemas/error-envelope.schema.json)
+- [Threat and Abuse Model](file:///docs/security/threat-model.md)

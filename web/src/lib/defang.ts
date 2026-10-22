@@ -8,7 +8,7 @@
 const BIDI_REGEX = /[\u202A-\u202E\u2066-\u2069\u200E\u200F]/g
 
 // Regex for Zero-Width Characters and non-printing formatters
-const ZERO_WIDTH_REGEX = /[\u200B\u200C\u200D\uFEFF\u00AD]/g
+const ZERO_WIDTH_REGEX = /[\u200B\uFEFF\u00AD]|\u200C|\u200D/g
 
 /**
  * Neutralizes adversarial Unicode tricks (bidirectional spoofing and zero-width cloaking).

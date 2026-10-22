@@ -25,6 +25,20 @@ export function ConnectionStatus({ className = '', initialCheck = true }: Connec
   const usingFallback = isUsingDevFallback()
   const apiUrl = getApiBaseUrl()
 
+  useEffect(() => {
+    if (!initialCheck) return
+    let ignore = false
+    getHealth().then((res) => {
+      if (!ignore) {
+        setResult(res)
+        setChecking(false)
+      }
+    })
+    return () => {
+      ignore = true
+    }
+  }, [initialCheck])
+
   const runCheck = useCallback(async () => {
     setChecking(true)
     try {
@@ -34,12 +48,6 @@ export function ConnectionStatus({ className = '', initialCheck = true }: Connec
       setChecking(false)
     }
   }, [])
-
-  useEffect(() => {
-    if (initialCheck) {
-      runCheck()
-    }
-  }, [initialCheck, runCheck])
 
   // Map database status to friendly neutral label
   function getDbLabel(data: HealthData): string {

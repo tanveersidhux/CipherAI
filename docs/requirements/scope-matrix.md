@@ -82,7 +82,7 @@ If development falls behind schedule during MVP execution, the following scope-r
 
 ## 4. Document Cross-References
 
-- [Product Requirements Document](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/PRD.md)
-- [Execution Plan](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/execution-plan.md)
-- [Risk Register](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/risk-register.md)
-- [Architecture Document](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/architecture.md)
+- [Product Requirements Document](file:///docs/requirements/PRD.md)
+- [Execution Plan](file:///docs/requirements/execution-plan.md)
+- [Risk Register](file:///docs/requirements/risk-register.md)
+- [Architecture Document](file:///docs/architecture/architecture.md)

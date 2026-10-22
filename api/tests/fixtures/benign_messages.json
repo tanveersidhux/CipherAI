@@ -1,0 +1,23 @@
+[
+  {"message": "Hi mom, I will be home around 6:30 for dinner tonight. Love you!", "max_level": "low"},
+  {"message": "Reminder: Your dental cleaning is scheduled for Tuesday Oct 28 at 2:00 PM. Reply 1 to confirm.", "max_level": "low"},
+  {"message": "Hey team, the sprint retro notes have been uploaded to the wiki. Let me know if anything is missing.", "max_level": "low"},
+  {"message": "Your library books are due back in 3 days. Renew online through your member dashboard.", "max_level": "low"},
+  {"message": "Happy birthday Sarah! Hope you have a wonderful day celebrating with family.", "max_level": "low"},
+  {"message": "The weather forecast predicts light rain tomorrow morning. Remember your umbrella.", "max_level": "low"},
+  {"message": "Thanks for attending our community workshop on urban gardening. We hope you enjoyed it!", "max_level": "low"},
+  {"message": "Can you review the attached draft when you get a chance? No rush, sometime this week is fine.", "max_level": "low"},
+  {"message": "Flight UA 452 has landed at gate B14. Baggage is arriving at carousel 3.", "max_level": "low"},
+  {"message": "Thank you for dining at Bistro Garden. Your server was Alex. Receipt #48291.", "max_level": "low"},
+  {"message": "Good morning! Just confirming our 10 AM coffee meetup at the corner cafe.", "max_level": "low"},
+  {"message": "The soccer match starts at 4 PM this Saturday. Don't forget orange slices for the team.", "max_level": "low"},
+  {"message": "Your prescription is ready for pickup at Main Street Pharmacy.", "max_level": "low"},
+  {"message": "Notice from City Water: Routine maintenance scheduled for tomorrow between 1 AM and 3 AM.", "max_level": "low"},
+  {"message": "Hey Dave, do you have that recipe for the vegan chili we made last winter?", "max_level": "low"},
+  {"message": "Congratulations on passing your certification exam! Great accomplishment.", "max_level": "low"},
+  {"message": "School bus route 14 is running approximately 10 minutes late due to traffic.", "max_level": "low"},
+  {"message": "Your grocery pickup order is being packed and will be ready between 5 PM and 6 PM.", "max_level": "low"},
+  {"message": "Don't forget to submit your timecard before Friday noon for the biweekly pay cycle.", "max_level": "low"},
+  {"message": "Thank you for supporting public radio. Your annual tax receipt is ready.", "max_level": "low"},
+  {"message": "Looking forward to seeing everyone at the neighborhood potluck on Sunday afternoon.", "max_level": "low"}
+]

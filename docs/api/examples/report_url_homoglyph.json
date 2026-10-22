@@ -1,0 +1,131 @@
+{
+  "report_id": "11111111-1111-4111-8111-111111111105",
+  "schema_version": "1.0",
+  "scan_type": "url",
+  "created_at": "2026-10-22T12:00:00Z",
+  "input": {
+    "display_value": "hxxps://xn--pypal-4ve[.]example[.]test/account-verification",
+    "normalized_value": "https://xn--pypal-4ve.example.test/account-verification",
+    "input_hash": "931942a74f301e925d7518eff598bba17e56b93c3621a5491bd648897685c7f9",
+    "input_length": 55
+  },
+  "assessment": {
+    "risk_score": 65,
+    "risk_level": "high",
+    "confidence": "high",
+    "verdict_label": "High risk indicators identified",
+    "limitations": [
+      "The destination page was not fetched or inspected.",
+      "No reputation databases were consulted.",
+      "Results are based purely on offline lexical, syntactic, and structural heuristics."
+    ]
+  },
+  "indicators": [
+    {
+      "indicator_id": "URL_HOMOGLYPH_PUNYCODE",
+      "category": "homoglyph",
+      "evidence_kind": "observed",
+      "title": "Punycode or Lookalike Homoglyph Hostname",
+      "description": "Hostname contains internationalized Punycode labels (xn--) or mixed Unicode scripts imitating legitimate brands.",
+      "observed_value": "p\u0430ypal.example.test",
+      "severity": "critical",
+      "triggered": true
+    },
+    {
+      "indicator_id": "URL_CREDENTIAL_PATH_KEYWORD",
+      "category": "credential_lure",
+      "evidence_kind": "inferred",
+      "title": "Credential Keywords in Path",
+      "description": "URL path targets sensitive authentication or account-recovery workflows (e.g., /login, /verify, /banking).",
+      "observed_value": "verification",
+      "severity": "high",
+      "triggered": true
+    }
+  ],
+  "score_breakdown": [
+    {
+      "indicator_id": "URL_HOMOGLYPH_PUNYCODE",
+      "points": 40,
+      "reason": "Punycode or Lookalike Homoglyph Hostname detected in input (+40 pts).",
+      "evidence_kind": "observed",
+      "capped": false
+    },
+    {
+      "indicator_id": "URL_CREDENTIAL_PATH_KEYWORD",
+      "points": 25,
+      "reason": "Credential Keywords in Path detected in input (+25 pts).",
+      "evidence_kind": "inferred",
+      "capped": false
+    }
+  ],
+  "external_evidence": [],
+  "ai_explanation": {
+    "summary": "CIPHER AI detected high-risk deceptive patterns resulting in a risk score of 65/100. Multiple corroborated structural or lexical indicators suggest an intentional threat.",
+    "key_findings": [
+      {
+        "text": "Punycode or Lookalike Homoglyph Hostname (Severity.CRITICAL severity finding).",
+        "indicator_ids": [
+          "URL_HOMOGLYPH_PUNYCODE"
+        ]
+      },
+      {
+        "text": "Credential Keywords in Path (Severity.HIGH severity finding).",
+        "indicator_ids": [
+          "URL_CREDENTIAL_PATH_KEYWORD"
+        ]
+      }
+    ],
+    "user_guidance": "Exercise extreme caution. Verify the communication independently before taking any requested action.",
+    "uncertainty_notes": "Analysis was conducted offline without destination network fetching or real-time reputation database lookups. Novel zero-day campaigns or benign internal resources may not be fully represented.",
+    "generated_by": "deterministic_fallback",
+    "model": null,
+    "validated": true
+  },
+  "recommended_actions": [
+    {
+      "action_id": "ACT_DO_NOT_CLICK",
+      "priority": 1,
+      "text": "Do not click, navigate to, or open this link under any circumstances.",
+      "applies_to_levels": [
+        "high",
+        "critical"
+      ]
+    },
+    {
+      "action_id": "ACT_VERIFY_OFFICIAL_CHANNEL",
+      "priority": 2,
+      "text": "Independently verify the communication using official contact details retrieved from a trusted bookmark or statement.",
+      "applies_to_levels": [
+        "medium",
+        "high",
+        "critical",
+        "inconclusive"
+      ]
+    },
+    {
+      "action_id": "ACT_CHANGE_PASSWORDS",
+      "priority": 3,
+      "text": "If credentials were submitted, immediately reset your password and enable multi-factor authentication from a secure device.",
+      "applies_to_levels": [
+        "high",
+        "critical"
+      ]
+    },
+    {
+      "action_id": "ACT_REPORT_PHISHING",
+      "priority": 5,
+      "text": "Report the suspicious message or URL to your email/messaging provider and internal security department.",
+      "applies_to_levels": [
+        "medium",
+        "high",
+        "critical"
+      ]
+    }
+  ],
+  "engine_version": "1.0.0",
+  "processing": {
+    "duration_ms": 12,
+    "ai_status": "disabled",
+    "external_lookup_status": "not_attempted"
+  }
+}

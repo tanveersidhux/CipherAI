@@ -11,32 +11,37 @@ export function useScanHistory() {
   const [riskFilter, setRiskFilter] = useState<string>('all')
   const [typeFilter, setTypeFilter] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState<string>('')
+  const [trigger, setTrigger] = useState(0)
 
-  const fetchHistory = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await api.listScans({
+  useEffect(() => {
+    let ignore = false
+    api
+      .listScans({
         risk_level: riskFilter !== 'all' ? riskFilter : undefined,
         scan_type: typeFilter !== 'all' ? typeFilter : undefined,
       })
-      setItems(res.items)
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err)
-      } else {
-        setError(
-          new ApiError('INTERNAL_ERROR', 'Failed to retrieve scan history.')
-        )
-      }
-    } finally {
-      setLoading(false)
-    }
-  }, [api, riskFilter, typeFilter])
+      .then((res) => {
+        if (!ignore) {
+          setItems(res.items)
+          setError(null)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        if (!ignore) {
+          setError(
+            err instanceof ApiError
+              ? err
+              : new ApiError('INTERNAL_ERROR', 'Failed to retrieve scan history.')
+          )
+          setLoading(false)
+        }
+      })
 
-  useEffect(() => {
-    fetchHistory()
-  }, [fetchHistory])
+    return () => {
+      ignore = true
+    }
+  }, [api, riskFilter, typeFilter, trigger])
 
   const deleteScan = useCallback(
     async (scanId: string) => {
@@ -49,15 +54,25 @@ export function useScanHistory() {
         } else {
           setError(new ApiError('INTERNAL_ERROR', 'Failed to delete scan item.'))
         }
-        throw err
       }
     },
     [api]
   )
 
+  const refetch = useCallback(() => {
+    setLoading(true)
+    setError(null)
+    setTrigger((prev) => prev + 1)
+  }, [])
+
+  // Filter items client-side by search query (display value or ID)
   const filteredItems = items.filter((item) => {
     if (!searchQuery.trim()) return true
-    return item.display_value.toLowerCase().includes(searchQuery.toLowerCase())
+    const q = searchQuery.toLowerCase()
+    return (
+      item.display_value.toLowerCase().includes(q) ||
+      item.id.toLowerCase().includes(q)
+    )
   })
 
   return {
@@ -71,7 +86,7 @@ export function useScanHistory() {
     setTypeFilter,
     searchQuery,
     setSearchQuery,
-    refetch: fetchHistory,
     deleteScan,
+    refetch,
   }
 }

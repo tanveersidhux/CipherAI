@@ -1,1 +1,1 @@
-"""Core application infrastructure, configuration, errors, and middleware."""
+"""Core configuration, error handling, and middleware."""

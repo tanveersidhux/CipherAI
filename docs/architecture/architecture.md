@@ -276,8 +276,8 @@ If a future phase (e.g., Phase 08) introduces dynamic website content inspection
 
 ## 7. Document Cross-References
 
-- [Product Requirements Document](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/PRD.md)
-- [Risk Scoring Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/risk-scoring-spec.md)
-- [AI Safety Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/ai-spec.md)
-- [Data Model Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/data-model.md)
-- [Threat and Abuse Model](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/security/threat-model.md)
+- [Product Requirements Document](file:///docs/requirements/PRD.md)
+- [Risk Scoring Specification](file:///docs/architecture/risk-scoring-spec.md)
+- [AI Safety Specification](file:///docs/architecture/ai-spec.md)
+- [Data Model Specification](file:///docs/architecture/data-model.md)
+- [Threat and Abuse Model](file:///docs/security/threat-model.md)

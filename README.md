@@ -14,8 +14,8 @@ CIPHER AI is an AI-assisted digital security and threat intelligence platform. U
 | **PHASE 01** | Specification, Schemas, Scoring Spec, Threat Model, Architecture | **COMPLETE** | [PHASE_01_REPORT.md](file:///docs/phase-reports/PHASE_01_REPORT.md) |
 | **PHASE 02** | UI/UX Design System, Page Layouts, Accessible Components, Web Shell | **COMPLETE** | [PHASE_02_REPORT.md](file:///docs/phase-reports/PHASE_02_REPORT.md) |
 | **PHASE 03** | Monorepo Scaffolding, FastAPI Foundation, Database Migration, Health API | **COMPLETE** | [PHASE_03_REPORT.md](file:///docs/phase-reports/PHASE_03_REPORT.md) |
-| **PHASE 04** | Core Security Engine, Lexical URL/Message Analysis, Risk Scoring | *NEXT* | [risk-scoring-spec.md](file:///docs/architecture/risk-scoring-spec.md) |
-| **PHASE 05** | Bounded AI Intelligence, Structured Prompts, Schema Validation | *PLANNED* | [ai-spec.md](file:///docs/architecture/ai-spec.md) |
+| **PHASE 04** | Core Security Engine, Lexical URL/Message Analysis, Risk Scoring | **COMPLETE** | [PHASE_04_REPORT.md](file:///docs/phase-reports/PHASE_04_REPORT.md) |
+| **PHASE 05** | Bounded AI Intelligence, Structured Prompts, Schema Validation | *NEXT* | [ai-spec.md](file:///docs/architecture/ai-spec.md) |
 | **PHASE 06** | Real Scan Endpoints, Scanning Workflows, Mock Replacement | *PLANNED* | [api-contracts.md](file:///docs/api/api-contracts.md) |
 | **PHASE 07** | Persistence Layer, Anonymous Sessions, History, Dashboard Telemetry | *PLANNED* | [data-model.md](file:///docs/architecture/data-model.md) |
 

@@ -27,24 +27,6 @@ export function ErrorState({ error, onRetry, className }: ErrorStateProps) {
     ERROR_MESSAGES[code] || apiErr?.message || error.message || 'An unexpected error occurred.'
   const requestId = apiErr?.request_id
 
-  const getIcon = () => {
-    switch (code) {
-      case 'RATE_LIMITED':
-        return Clock
-      case 'DEPENDENCY_UNAVAILABLE':
-        return WifiOff
-      case 'NOT_FOUND':
-        return FileQuestion
-      case 'UNAUTHENTICATED':
-      case 'FORBIDDEN':
-        return ShieldAlert
-      default:
-        return AlertCircle
-    }
-  }
-
-  const Icon = getIcon()
-
   return (
     <div
       role="alert"
@@ -55,7 +37,17 @@ export function ErrorState({ error, onRetry, className }: ErrorStateProps) {
       )}
     >
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10 text-destructive mb-3">
-        <Icon className="h-6 w-6" aria-hidden="true" />
+        {code === 'RATE_LIMITED' ? (
+          <Clock className="h-6 w-6" aria-hidden="true" />
+        ) : code === 'DEPENDENCY_UNAVAILABLE' ? (
+          <WifiOff className="h-6 w-6" aria-hidden="true" />
+        ) : code === 'NOT_FOUND' ? (
+          <FileQuestion className="h-6 w-6" aria-hidden="true" />
+        ) : code === 'UNAUTHENTICATED' || code === 'FORBIDDEN' ? (
+          <ShieldAlert className="h-6 w-6" aria-hidden="true" />
+        ) : (
+          <AlertCircle className="h-6 w-6" aria-hidden="true" />
+        )}
       </div>
 
       <h3 className="text-base font-semibold text-foreground mb-1">

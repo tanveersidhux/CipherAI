@@ -97,7 +97,7 @@ This document specifies the non-functional requirements (quality attributes, sys
 
 ## 3. Document Cross-References
 
-- [Product Requirements Document](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/PRD.md)
-- [System Architecture](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/architecture.md)
-- [Threat and Abuse Model](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/security/threat-model.md)
-- [Testing & QA Strategy](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/testing/test-strategy.md)
+- [Product Requirements Document](file:///docs/requirements/PRD.md)
+- [System Architecture](file:///docs/architecture/architecture.md)
+- [Threat and Abuse Model](file:///docs/security/threat-model.md)
+- [Testing & QA Strategy](file:///docs/testing/test-strategy.md)

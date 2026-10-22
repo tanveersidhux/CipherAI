@@ -1,1 +1,1 @@
-"""Pydantic schemas package."""
+"""Pydantic API and threat report schemas."""

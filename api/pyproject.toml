@@ -10,6 +10,8 @@ dependencies = [
     "pydantic==2.10.6",
     "pydantic-settings==2.8.1",
     "httpx==0.28.1",
+    "tldextract==5.4.0",
+    "idna==3.20",
 ]
 
 [project.optional-dependencies]
@@ -17,6 +19,7 @@ dev = [
     "pytest==8.3.5",
     "pytest-cov==6.0.0",
     "ruff==0.9.9",
+    "jsonschema==4.26.0",
 ]
 
 [tool.ruff]
@@ -36,6 +39,8 @@ select = [
 ]
 ignore = [
     "B008",   # Do not perform function call in argument defaults (standard for FastAPI Depends)
+    "E501",   # Line length handled by formatter
+    "UP042",  # Pydantic v2 str, Enum inheritance preserved
 ]
 
 [tool.ruff.format]

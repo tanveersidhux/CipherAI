@@ -1,0 +1,24 @@
+{
+  "version": "1.0.0",
+  "last_reviewed": "2026-10-22",
+  "description": "Curated mapping of high-target brand keywords to authoritative registrable domains.",
+  "maintenance_notes": "All domains must be confirmed official root domains. Subdomains of these roots inherit legitimacy.",
+  "brands": {
+    "paypal": ["paypal.com"],
+    "apple": ["apple.com", "icloud.com"],
+    "microsoft": ["microsoft.com", "live.com", "office.com"],
+    "google": ["google.com", "gmail.com"],
+    "chase": ["chase.com"],
+    "wellsfargo": ["wellsfargo.com", "wells-fargo.com"],
+    "bankofamerica": ["bankofamerica.com"],
+    "amazon": ["amazon.com"],
+    "netflix": ["netflix.com"],
+    "usps": ["usps.com"],
+    "ups": ["ups.com"],
+    "fedex": ["fedex.com"],
+    "dhl": ["dhl.com"],
+    "irs": ["irs.gov"],
+    "facebook": ["facebook.com", "meta.com"],
+    "instagram": ["instagram.com"]
+  }
+}

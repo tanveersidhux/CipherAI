@@ -1,1 +1,1 @@
-"""Data Repositories package (Reserved for Phase 07)."""
+"""Data persistence repositories (Phase 07)."""

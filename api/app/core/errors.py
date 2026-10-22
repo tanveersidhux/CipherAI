@@ -28,12 +28,14 @@ class AppError(Exception):
         message: str,
         http_status: int = 500,
         details: list[dict[str, Any]] | None = None,
+        headers: dict[str, str] | None = None,
     ) -> None:
         super().__init__(message)
         self.code = code
         self.message = message
         self.http_status = http_status
         self.details = details or []
+        self.headers = headers or {}
 
 
 class ValidationError(AppError):
@@ -59,7 +61,11 @@ class InvalidUrlError(AppError):
         self,
         message: str = "Submitted URL is malformed or invalid.",
         details: list[dict[str, Any]] | None = None,
+        issue: str | None = None,
+        field: str | None = "url",
     ) -> None:
+        if details is None:
+            details = [{"field": field, "issue": issue or "invalid_url"}]
         super().__init__(
             code="INVALID_URL",
             message=message,
@@ -75,7 +81,12 @@ class InputTooLargeError(AppError):
         self,
         message: str = "Payload exceeds maximum allowed size.",
         details: list[dict[str, Any]] | None = None,
+        field: str | None = None,
+        max_allowed: int | None = None,
     ) -> None:
+        if details is None:
+            issue = f"exceeds_max_{max_allowed}" if max_allowed else "input_too_large"
+            details = [{"field": field, "issue": issue}]
         super().__init__(
             code="INPUT_TOO_LARGE",
             message=message,
@@ -155,13 +166,18 @@ class RateLimitedError(AppError):
         self,
         message: str = "Rate limit exceeded. Please wait before submitting another scan.",
         details: list[dict[str, Any]] | None = None,
+        retry_after: int = 60,
     ) -> None:
+        if details is None:
+            details = [{"field": None, "issue": f"retry_after_{retry_after}s"}]
         super().__init__(
             code="RATE_LIMITED",
             message=message,
             http_status=429,
             details=details,
+            headers={"Retry-After": str(retry_after)},
         )
+        self.retry_after = retry_after
 
 
 class DependencyUnavailableError(AppError):
@@ -236,6 +252,7 @@ def build_error_response(
     envelope: dict[str, Any],
     req_id: str,
     app_env: str = "development",
+    custom_headers: dict[str, str] | None = None,
 ) -> JSONResponse:
     """Construct JSONResponse with standard error envelope and security headers."""
     headers: dict[str, str] = {
@@ -249,6 +266,8 @@ def build_error_response(
     }
     if app_env == "production":
         headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    if custom_headers:
+        headers.update(custom_headers)
 
     return JSONResponse(
         status_code=status_code,
@@ -271,6 +290,7 @@ async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
         envelope=envelope,
         req_id=req_id,
         app_env=_get_app_env(request),
+        custom_headers=exc.headers,
     )
 
 

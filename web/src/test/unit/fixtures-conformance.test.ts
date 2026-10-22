@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { isThreatReport, type ThreatReport } from '@/types/threat-report'
+import { isThreatReport } from '@/types/threat-report'
 import { ALL_MOCK_FIXTURES } from '@/lib/api/mocks/fixtures'
 import { MANDATORY_DISCLAIMERS } from '@/lib/content/wording'
 

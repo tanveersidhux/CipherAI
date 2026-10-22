@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0",
+  "last_reviewed": "2026-10-22",
+  "description": "TLDs historically overrepresented in opportunistic phishing and abuse campaigns.",
+  "maintenance_notes": "Presence on this list is a weak heuristic signal and must never trigger high scores alone.",
+  "tlds": [
+    "top",
+    "tk",
+    "xyz",
+    "click",
+    "zip",
+    "mov",
+    "work",
+    "rest",
+    "gq",
+    "cf",
+    "ml",
+    "fit",
+    "surf",
+    "cam"
+  ]
+}

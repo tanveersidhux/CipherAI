@@ -1,0 +1,194 @@
+{
+  "report_id": "11111111-1111-4111-8111-111111111110",
+  "schema_version": "1.0",
+  "scan_type": "message",
+  "created_at": "2026-10-22T12:00:00Z",
+  "input": {
+    "display_value": "URGENT: Your Wells Fargo account has been suspended. You must verify within 24 hours at http://bit.ly/sample-link to prevent permanent closure.",
+    "normalized_value": "URGENT: Your Wells Fargo account has been suspended. You must verify within 24 hours at http://bit.ly/sample-link to prevent permanent closure.",
+    "input_hash": "abb3e2fba32056d9330b79c4d29c9cf90bbc3d37cbbeacdb722c5103c8012f12",
+    "input_length": 143
+  },
+  "assessment": {
+    "risk_score": 80,
+    "risk_level": "critical",
+    "confidence": "high",
+    "verdict_label": "Critical threat indicators identified",
+    "limitations": [
+      "The destination page was not fetched or inspected.",
+      "No reputation databases were consulted.",
+      "Results are based purely on offline lexical, syntactic, and structural heuristics."
+    ]
+  },
+  "indicators": [
+    {
+      "indicator_id": "MSG_BANK_IMPERSONATION",
+      "category": "impersonation",
+      "evidence_kind": "inferred",
+      "title": "Financial Institution Impersonation",
+      "description": "Message claims to originate from a major retail bank or financial platform without verifiable origin.",
+      "observed_value": "Institution: 'wells fargo'",
+      "severity": "high",
+      "triggered": true
+    },
+    {
+      "indicator_id": "MSG_ACCOUNT_CLOSURE_THREAT",
+      "category": "urgency",
+      "evidence_kind": "observed",
+      "title": "Threat of Account Suspension or Closure",
+      "description": "Message threatens imminent account closure, suspension, or termination if immediate action is not taken.",
+      "observed_value": "Threat phrase: 'account has been suspended'",
+      "severity": "high",
+      "triggered": true
+    },
+    {
+      "indicator_id": "MSG_EMBEDDED_SHORT_LINK",
+      "category": "redirect_shortener",
+      "evidence_kind": "observed",
+      "title": "Message Contains Shortened URL",
+      "description": "Message incorporates a shortened link hiding the real target destination.",
+      "observed_value": "Shortener: 'bit.ly'",
+      "severity": "medium",
+      "triggered": true
+    },
+    {
+      "indicator_id": "MSG_URGENCY_DEADLINE",
+      "category": "urgency",
+      "evidence_kind": "observed",
+      "title": "Artificial Urgency or Strict Deadline",
+      "description": "Message exerts psychological pressure using artificial time limits and deadline demands.",
+      "observed_value": "Urgency phrase: 'within 24 hours'",
+      "severity": "medium",
+      "triggered": true
+    }
+  ],
+  "score_breakdown": [
+    {
+      "indicator_id": "MSG_EMBEDDED_SHORT_LINK",
+      "points": 20,
+      "reason": "Message Contains Shortened URL detected in input (+20 pts).",
+      "evidence_kind": "observed",
+      "capped": false
+    },
+    {
+      "indicator_id": "MSG_URGENCY_DEADLINE",
+      "points": 20,
+      "reason": "Artificial Urgency or Strict Deadline detected in input (+20 pts).",
+      "evidence_kind": "observed",
+      "capped": false
+    },
+    {
+      "indicator_id": "MSG_ACCOUNT_CLOSURE_THREAT",
+      "points": 10,
+      "reason": "Threat of Account Suspension or Closure triggered (+10 pts applied: capped at category maximum 30).",
+      "evidence_kind": "observed",
+      "capped": true
+    },
+    {
+      "indicator_id": "MSG_BANK_IMPERSONATION",
+      "points": 30,
+      "reason": "Financial Institution Impersonation detected in input (+30 pts).",
+      "evidence_kind": "inferred",
+      "capped": false
+    }
+  ],
+  "external_evidence": [],
+  "ai_explanation": {
+    "summary": "CIPHER AI identified critical threat indicators with an aggregated risk score of 80/100. The asset exhibits severe markers characteristic of active credential phishing or direct scam operations.",
+    "key_findings": [
+      {
+        "text": "Financial Institution Impersonation (Severity.HIGH severity finding).",
+        "indicator_ids": [
+          "MSG_BANK_IMPERSONATION"
+        ]
+      },
+      {
+        "text": "Threat of Account Suspension or Closure (Severity.HIGH severity finding).",
+        "indicator_ids": [
+          "MSG_ACCOUNT_CLOSURE_THREAT"
+        ]
+      },
+      {
+        "text": "Message Contains Shortened URL (Severity.MEDIUM severity finding).",
+        "indicator_ids": [
+          "MSG_EMBEDDED_SHORT_LINK"
+        ]
+      },
+      {
+        "text": "Artificial Urgency or Strict Deadline (Severity.MEDIUM severity finding).",
+        "indicator_ids": [
+          "MSG_URGENCY_DEADLINE"
+        ]
+      }
+    ],
+    "user_guidance": "Treat this asset as hostile. Do not interact, provide credentials, or follow external links.",
+    "uncertainty_notes": "Analysis was conducted offline without destination network fetching or real-time reputation database lookups. Novel zero-day campaigns or benign internal resources may not be fully represented.",
+    "generated_by": "deterministic_fallback",
+    "model": null,
+    "validated": true
+  },
+  "recommended_actions": [
+    {
+      "action_id": "ACT_DO_NOT_CLICK",
+      "priority": 1,
+      "text": "Do not click, navigate to, or open this link under any circumstances.",
+      "applies_to_levels": [
+        "high",
+        "critical"
+      ]
+    },
+    {
+      "action_id": "ACT_DO_NOT_REPLY_OR_SHARE",
+      "priority": 1,
+      "text": "Do not reply to this message, and never disclose or forward passwords, OTPs, or security PINs.",
+      "applies_to_levels": [
+        "high",
+        "critical"
+      ]
+    },
+    {
+      "action_id": "ACT_VERIFY_OFFICIAL_CHANNEL",
+      "priority": 2,
+      "text": "Independently verify the communication using official contact details retrieved from a trusted bookmark or statement.",
+      "applies_to_levels": [
+        "medium",
+        "high",
+        "critical",
+        "inconclusive"
+      ]
+    },
+    {
+      "action_id": "ACT_CHANGE_PASSWORDS",
+      "priority": 3,
+      "text": "If credentials were submitted, immediately reset your password and enable multi-factor authentication from a secure device.",
+      "applies_to_levels": [
+        "high",
+        "critical"
+      ]
+    },
+    {
+      "action_id": "ACT_CONTACT_BANK",
+      "priority": 4,
+      "text": "If financial information or card numbers were shared, contact your bank immediately to block unauthorized transactions.",
+      "applies_to_levels": [
+        "critical"
+      ]
+    },
+    {
+      "action_id": "ACT_REPORT_PHISHING",
+      "priority": 5,
+      "text": "Report the suspicious message or URL to your email/messaging provider and internal security department.",
+      "applies_to_levels": [
+        "medium",
+        "high",
+        "critical"
+      ]
+    }
+  ],
+  "engine_version": "1.0.0",
+  "processing": {
+    "duration_ms": 15,
+    "ai_status": "disabled",
+    "external_lookup_status": "not_attempted"
+  }
+}

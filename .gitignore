@@ -29,6 +29,7 @@ htmlcov/
 .pytest_cache/
 .vitest_cache/
 .ruff_cache/
+**/.tld_cache/
 web/coverage/
 
 # IDE and System Files

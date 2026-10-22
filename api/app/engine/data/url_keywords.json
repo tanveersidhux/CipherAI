@@ -1,0 +1,45 @@
+{
+  "version": "1.0.0",
+  "last_reviewed": "2026-10-22",
+  "description": "Keywords associated with credential harvesting, authentication lures, and account recovery in URLs.",
+  "maintenance_notes": "Terms should target high-risk sensitive action routes.",
+  "credential_keywords": [
+    "login",
+    "signin",
+    "sign-in",
+    "logon",
+    "verify",
+    "verification",
+    "account-update",
+    "banking",
+    "auth",
+    "authenticate",
+    "password",
+    "passphrase",
+    "credential",
+    "security-checkpoint",
+    "update-billing"
+  ],
+  "open_redirect_params": [
+    "url",
+    "redirect",
+    "next",
+    "dest",
+    "destination",
+    "return",
+    "return_to",
+    "goto",
+    "link",
+    "target"
+  ],
+  "suspicious_query_params": [
+    "password",
+    "pass",
+    "token",
+    "session_key",
+    "auth_token",
+    "access_token",
+    "pin",
+    "cvv"
+  ]
+}

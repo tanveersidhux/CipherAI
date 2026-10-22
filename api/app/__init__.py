@@ -1,1 +1,3 @@
-"""CIPHER AI FastAPI backend application package."""
+"""CipherAI Backend Application Package."""
+
+__version__ = "1.0.0"

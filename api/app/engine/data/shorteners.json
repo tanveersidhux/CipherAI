@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "last_reviewed": "2026-10-22",
+  "description": "Known public and marketing URL shortening domains.",
+  "maintenance_notes": "Only include established redirection services.",
+  "domains": [
+    "bit.ly",
+    "tinyurl.com",
+    "t.co",
+    "goo.gl",
+    "ow.ly",
+    "is.gd",
+    "buff.ly",
+    "rebrand.ly",
+    "cutt.ly",
+    "shorturl.at"
+  ]
+}

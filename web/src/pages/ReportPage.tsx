@@ -39,8 +39,6 @@ export default function ReportPage() {
   useEffect(() => {
     if (!reportId) return
     let isMounted = true
-    setLoading(true)
-    setError(null)
 
     api
       .getScan(reportId)

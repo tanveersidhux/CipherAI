@@ -354,7 +354,7 @@ Below are 10 complete, mathematically verified scoring examples. Each example de
 
 ## 7. Document Cross-References
 
-- [Glossary and Wording Guide](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/glossary-and-wording.md)
-- [System Architecture](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/architecture.md)
-- [Threat and Abuse Model](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/security/threat-model.md)
-- [Testing & QA Strategy](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/testing/test-strategy.md)
+- [Glossary and Wording Guide](file:///docs/requirements/glossary-and-wording.md)
+- [System Architecture](file:///docs/architecture/architecture.md)
+- [Threat and Abuse Model](file:///docs/security/threat-model.md)
+- [Testing & QA Strategy](file:///docs/testing/test-strategy.md)

@@ -89,7 +89,7 @@ graph LR
 
 ## 4. Document Cross-References
 
-- [System Architecture](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/architecture.md)
-- [Non-Functional Requirements](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/non-functional-requirements.md)
-- [Data Model Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/data-model.md)
-- [Testing & QA Strategy](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/testing/test-strategy.md)
+- [System Architecture](file:///docs/architecture/architecture.md)
+- [Non-Functional Requirements](file:///docs/requirements/non-functional-requirements.md)
+- [Data Model Specification](file:///docs/architecture/data-model.md)
+- [Testing & QA Strategy](file:///docs/testing/test-strategy.md)

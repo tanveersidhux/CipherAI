@@ -207,7 +207,7 @@
 
 ## 3. Document Cross-References
 
-- [Product Requirements Document](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/PRD.md)
-- [Scope Matrix](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/scope-matrix.md)
-- [Testing & QA Strategy (Traceability Matrix)](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/testing/test-strategy.md)
-- [Risk Scoring Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/risk-scoring-spec.md)
+- [Product Requirements Document](file:///docs/requirements/PRD.md)
+- [Scope Matrix](file:///docs/requirements/scope-matrix.md)
+- [Testing & QA Strategy (Traceability Matrix)](file:///docs/testing/test-strategy.md)
+- [Risk Scoring Specification](file:///docs/architecture/risk-scoring-spec.md)

@@ -226,7 +226,7 @@ The AI subsystem must be validated against the following 15 adversarial test fix
 
 ## 8. Document Cross-References
 
-- [Glossary and Wording Guide](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/glossary-and-wording.md)
-- [System Architecture](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/architecture.md)
-- [Risk Scoring Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/risk-scoring-spec.md)
-- [Threat and Abuse Model](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/security/threat-model.md)
+- [Glossary and Wording Guide](file:///docs/requirements/glossary-and-wording.md)
+- [System Architecture](file:///docs/architecture/architecture.md)
+- [Risk Scoring Specification](file:///docs/architecture/risk-scoring-spec.md)
+- [Threat and Abuse Model](file:///docs/security/threat-model.md)

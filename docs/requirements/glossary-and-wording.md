@@ -109,7 +109,7 @@ Risk level visual representations must always pair color with text and iconograp
 
 ## 6. Document Cross-References
 
-- [Product Requirements Document](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/PRD.md)
-- [Risk Scoring Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/risk-scoring-spec.md)
-- [AI Safety & Explanation Specification](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/ai-spec.md)
-- [Threat Model](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/security/threat-model.md)
+- [Product Requirements Document](file:///docs/requirements/PRD.md)
+- [Risk Scoring Specification](file:///docs/architecture/risk-scoring-spec.md)
+- [AI Safety & Explanation Specification](file:///docs/architecture/ai-spec.md)
+- [Threat Model](file:///docs/security/threat-model.md)

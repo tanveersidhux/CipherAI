@@ -45,7 +45,7 @@ Risks are evaluated using standard qualitative scales:
 
 ## 3. Document Cross-References
 
-- [Scope Matrix](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/scope-matrix.md)
-- [Execution Plan](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/execution-plan.md)
-- [Threat and Abuse Model](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/security/threat-model.md)
-- [Non-Functional Requirements](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/requirements/non-functional-requirements.md)
+- [Scope Matrix](file:///docs/requirements/scope-matrix.md)
+- [Execution Plan](file:///docs/requirements/execution-plan.md)
+- [Threat and Abuse Model](file:///docs/security/threat-model.md)
+- [Non-Functional Requirements](file:///docs/requirements/non-functional-requirements.md)

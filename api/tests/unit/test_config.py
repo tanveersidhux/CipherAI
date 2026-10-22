@@ -17,7 +17,7 @@ def test_development_defaults() -> None:
     assert settings.RATE_LIMIT_SCANS_PER_MINUTE == 30
     assert settings.MAX_MESSAGE_CHARS == 5000
     assert settings.MAX_URL_CHARS == 2048
-    assert settings.MAX_REQUEST_BODY_BYTES == 20000
+    assert settings.MAX_REQUEST_BODY_BYTES == 32768
     assert settings.LLM_ENABLED is False
     assert settings.llm_status == "disabled"
     assert settings.is_database_configured is False

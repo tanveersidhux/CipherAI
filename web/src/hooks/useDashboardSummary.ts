@@ -8,29 +8,40 @@ export function useDashboardSummary() {
   const [data, setData] = useState<DashboardSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<ApiError | null>(null)
-
-  const fetchSummary = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const summary = await api.getDashboardSummary()
-      setData(summary)
-    } catch (err) {
-      if (err instanceof ApiError) {
-        setError(err)
-      } else {
-        setError(
-          new ApiError('INTERNAL_ERROR', 'Failed to retrieve dashboard analytics.')
-        )
-      }
-    } finally {
-      setLoading(false)
-    }
-  }, [api])
+  const [trigger, setTrigger] = useState(0)
 
   useEffect(() => {
-    fetchSummary()
-  }, [fetchSummary])
+    let ignore = false
+    api
+      .getDashboardSummary()
+      .then((summary) => {
+        if (!ignore) {
+          setData(summary)
+          setError(null)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        if (!ignore) {
+          setError(
+            err instanceof ApiError
+              ? err
+              : new ApiError('INTERNAL_ERROR', 'Failed to retrieve dashboard analytics.')
+          )
+          setLoading(false)
+        }
+      })
 
-  return { data, loading, error, refetch: fetchSummary }
+    return () => {
+      ignore = true
+    }
+  }, [api, trigger])
+
+  const refetch = useCallback(() => {
+    setLoading(true)
+    setError(null)
+    setTrigger((prev) => prev + 1)
+  }, [])
+
+  return { data, loading, error, refetch }
 }

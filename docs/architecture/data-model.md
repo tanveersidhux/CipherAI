@@ -213,7 +213,7 @@ CREATE POLICY user_scans_delete ON scans
 
 ## 6. Document Cross-References
 
-- [Draft Schema SQL](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/schema-draft.sql)
-- [System Architecture](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/architecture/architecture.md)
-- [Threat and Abuse Model](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/security/threat-model.md)
-- [API Contracts](file:///c:/Users/HP/OneDrive/Desktop/CipherAI/docs/api/api-contracts.md)
+- [Draft Schema SQL](file:///docs/architecture/schema-draft.sql)
+- [System Architecture](file:///docs/architecture/architecture.md)
+- [Threat and Abuse Model](file:///docs/security/threat-model.md)
+- [API Contracts](file:///docs/api/api-contracts.md)

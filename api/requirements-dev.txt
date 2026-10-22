@@ -1,5 +1,6 @@
 -r requirements.txt
 pytest==8.3.5
-# pytest-cov is required to measure automated test coverage on app/core and app/api modules against the 90% target
 pytest-cov==6.0.0
+pytest-asyncio==1.4.0
 ruff==0.9.9
+jsonschema==4.26.0
