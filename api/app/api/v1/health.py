@@ -13,7 +13,13 @@ import httpx
 from fastapi import APIRouter, Depends
 
 from app.core.config import Settings, get_settings
-from app.schemas.health import DatabaseHealthStatus, DependencyHealth, HealthResponse
+from app.schemas.health import (
+    DatabaseHealthStatus,
+    DependencyHealth,
+    HealthResponse,
+    LivenessResponse,
+    ReadinessResponse,
+)
 
 logger = logging.getLogger("cipher.health")
 router = APIRouter(tags=["System"])
@@ -118,6 +124,44 @@ async def get_health(
         status="ok",
         app_version=settings.APP_VERSION,
         environment=settings.APP_ENV,
+        timestamp=datetime.now(UTC),
+        dependencies=DependencyHealth(
+            database=db_status,
+            llm=settings.llm_status,
+        ),
+    )
+
+
+@router.get(
+    "/health/live",
+    response_model=LivenessResponse,
+    summary="Liveness Probe",
+    description="Instant liveness check for container orchestration and process supervision.",
+)
+async def get_liveness() -> LivenessResponse:
+    """Return 200 OK indicating ASGI process is healthy and scheduling requests."""
+    return LivenessResponse(
+        status="alive",
+        timestamp=datetime.now(UTC),
+    )
+
+
+@router.get(
+    "/health/ready",
+    response_model=ReadinessResponse,
+    summary="Readiness Probe",
+    description="Evaluates critical database and runtime dependencies before accepting traffic.",
+)
+async def get_readiness(
+    settings: Settings = Depends(get_settings),
+) -> ReadinessResponse:
+    """Return readiness state of downstream backing services."""
+    db_status = await check_database_health(settings)
+    # If database is configured and unavailable, status is degraded; otherwise ready
+    is_degraded = settings.is_database_configured and db_status == "unavailable"
+
+    return ReadinessResponse(
+        status="degraded" if is_degraded else "ready",
         timestamp=datetime.now(UTC),
         dependencies=DependencyHealth(
             database=db_status,

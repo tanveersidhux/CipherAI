@@ -52,3 +52,22 @@ class HealthResponse(BaseModel):
         ...,
         description="Detailed readiness of downstream dependencies.",
     )
+
+
+class LivenessResponse(BaseModel):
+    """Minimal probe confirming the ASGI event loop and process are alive."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["alive"] = "alive"
+    timestamp: datetime
+
+
+class ReadinessResponse(BaseModel):
+    """Probe indicating whether dependencies are ready to accept traffic."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["ready", "degraded"]
+    timestamp: datetime
+    dependencies: DependencyHealth

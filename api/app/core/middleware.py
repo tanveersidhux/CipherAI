@@ -7,6 +7,7 @@ Provides:
 4. Strict CORS allowlisting
 """
 
+import contextlib
 import json
 import logging
 import time
@@ -19,6 +20,7 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from app.core.config import Settings
 from app.core.errors import InputTooLargeError, build_error_envelope
 from app.core.logging import get_request_id, set_request_id
+from app.core.metrics import metrics
 from app.core.security import sanitize_request_id
 
 logger = logging.getLogger("cipher.access")
@@ -44,15 +46,21 @@ class RequestIdAndLoggingMiddleware(BaseHTTPMiddleware):
             raise
         finally:
             duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
+            status_code = getattr(response, "status_code", 500) if "response" in locals() else 500
+
+            # Record in-memory metrics safely (no crash risk)
+            with contextlib.suppress(Exception):
+                metrics.record_http_request(
+                    request.method, request.url.path, status_code, duration_ms
+                )
+
             # Access log without query strings or user payloads
             logger.info(
                 "Access log",
                 extra={
                     "method": request.method,
                     "path": request.url.path,
-                    "status_code": getattr(response, "status_code", 500)
-                    if "response" in locals()
-                    else 500,
+                    "status_code": status_code,
                     "duration_ms": duration_ms,
                     "request_id": req_id,
                 },

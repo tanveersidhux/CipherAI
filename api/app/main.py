@@ -11,13 +11,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from app.api.v1.health import get_health
+from app.api.v1.health import get_health, get_liveness, get_readiness
 from app.api.v1.router import v1_router
 from app.core.config import Settings, get_settings
 from app.core.errors import register_exception_handlers
 from app.core.logging import setup_logging
 from app.core.middleware import setup_middleware
-from app.schemas.health import HealthResponse
+from app.schemas.health import HealthResponse, LivenessResponse, ReadinessResponse
 
 logger = logging.getLogger("cipher.main")
 
@@ -97,6 +97,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/health", response_model=HealthResponse, include_in_schema=False)
     async def root_health() -> HealthResponse:
         return await get_health(resolved_settings)
+
+    @app.get("/health/live", response_model=LivenessResponse, include_in_schema=False)
+    async def root_liveness() -> LivenessResponse:
+        return await get_liveness()
+
+    @app.get("/health/ready", response_model=ReadinessResponse, include_in_schema=False)
+    async def root_readiness() -> ReadinessResponse:
+        return await get_readiness(resolved_settings)
 
     return app
 

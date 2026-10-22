@@ -28,6 +28,21 @@ def handle_scan_persistence(
     - Authenticated user: attempts persistence; if error occurs, logs safely and returns
       persistence_status="save_failed" without breaking the response.
     """
+    from app.core.metrics import metrics
+
+    try:
+        s_type = (
+            report.scan_type.value if hasattr(report.scan_type, "value") else str(report.scan_type)
+        )
+        r_level = (
+            report.assessment.risk_level.value
+            if hasattr(report.assessment.risk_level, "value")
+            else str(report.assessment.risk_level)
+        )
+        metrics.record_scan(s_type, r_level)
+    except Exception:
+        pass
+
     if user is None:
         report.persistence_status = "not_saved_guest"
         report.scan_id = None

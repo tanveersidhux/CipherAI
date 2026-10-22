@@ -21,8 +21,7 @@ CIPHER AI is an AI-assisted digital security and threat intelligence platform. U
 | **PHASE 08** | Advanced Threat Features, Reputation APIs, Email Forensics, Batches | **COMPLETE** | [PHASE_08_REPORT.md](file:///docs/phase-reports/PHASE_08_REPORT.md) |
 | **PHASE 09** | Security Hardening, RLS Enforcement, SSRF Protection, Penetration Tests | **COMPLETE** | [PHASE_09_REPORT.md](file:///docs/phase-reports/PHASE_09_REPORT.md) |
 | **PHASE 10** | Production Deployment, Infrastructure Config, Cloud Verification | **COMPLETE** | [PHASE_10_REPORT.md](file:///docs/phase-reports/PHASE_10_REPORT.md) |
-
-
+| **PHASE 11** | Monitoring, Observability, Telemetry, Scan Quality Evaluation | **COMPLETE** | [PHASE_11_REPORT.md](file:///docs/phase-reports/PHASE_11_REPORT.md) |
 ---
 
 ## Quick Start (Clone to Running in Under 15 Minutes)
@@ -93,6 +92,9 @@ node scripts/check-no-secrets-in-web.mjs
 
 ### 3. Setup & Development Guides
 - [Production Deployment Guide](file:///docs/deployment.md)
+- [Monitoring & Observability Guide](file:///docs/monitoring.md)
+- [Incident Response & Operational Runbooks](file:///docs/incident-response.md)
+- [Scan Quality Evaluation & Benchmark Guide](file:///docs/scan-quality-evaluation.md)
 - [Local Development Guide](file:///docs/setup/local-development.md)
 - [Database Setup & Migration Guide](file:///docs/setup/database-setup.md)
 - [Contributing & PR Guidelines](file:///CONTRIBUTING.md)
@@ -134,3 +136,12 @@ node scripts/check-no-secrets-in-web.mjs
 - [PHASE 01 Completion Report](file:///docs/phase-reports/PHASE_01_REPORT.md)
 - [PHASE 02 Completion Report](file:///docs/phase-reports/PHASE_02_REPORT.md)
 - [PHASE 03 Completion Report](file:///docs/phase-reports/PHASE_03_REPORT.md)
+- [PHASE 04 Completion Report](file:///docs/phase-reports/PHASE_04_REPORT.md)
+- [PHASE 05 Completion Report](file:///docs/phase-reports/PHASE_05_REPORT.md)
+- [PHASE 06 Completion Report](file:///docs/phase-reports/PHASE_06_REPORT.md)
+- [PHASE 07 Completion Report](file:///docs/phase-reports/PHASE_07_REPORT.md)
+- [PHASE 08 Completion Report](file:///docs/phase-reports/PHASE_08_REPORT.md)
+- [PHASE 09 Completion Report](file:///docs/phase-reports/PHASE_09_REPORT.md)
+- [PHASE 10 Completion Report](file:///docs/phase-reports/PHASE_10_REPORT.md)
+- [PHASE 11 Completion Report](file:///docs/phase-reports/PHASE_11_REPORT.md)
+

@@ -91,6 +91,10 @@ class Settings(BaseSettings):
     # Email Analysis Configuration
     EMAIL_MAX_BYTES: Annotated[int, Field(ge=1024, le=10485760)] = 1048576
 
+    # Phase 11 Monitoring & Observability
+    METRICS_ENABLED: bool = True
+    METRICS_AUTH_TOKEN: SecretStr | None = None
+
     @field_validator("CORS_ALLOWED_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, value: str | list[str] | None) -> list[str]:

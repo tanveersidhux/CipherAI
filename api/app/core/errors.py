@@ -238,6 +238,13 @@ def build_error_envelope(
     request_id: str,
 ) -> dict[str, Any]:
     """Single-source builder for standard error envelope response structure."""
+    try:
+        from app.core.metrics import metrics
+
+        metrics.record_error(code)
+    except Exception:
+        pass
+
     return {
         "error": {
             "code": code,

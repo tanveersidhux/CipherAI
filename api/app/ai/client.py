@@ -1,11 +1,13 @@
 """LLM provider client abstraction and concrete HTTP implementations using httpx."""
 
 import logging
+import time
 from typing import Any, Protocol, runtime_checkable
 
 import httpx
 
 from app.core.config import Settings
+from app.core.metrics import metrics
 
 logger = logging.getLogger("cipher.ai.client")
 
@@ -68,16 +70,33 @@ class HttpxLLMClient:
         timeout_seconds: float = 12.0,
     ) -> str:
         effective_timeout = timeout_seconds or self.timeout
+        start_time = time.perf_counter()
 
-        if self.provider == "anthropic":
-            return await self._call_anthropic(system_prompt, user_prompt, effective_timeout)
-        elif self.provider in ("gemini", "google"):
-            return await self._call_gemini(system_prompt, user_prompt, effective_timeout)
-        elif self.provider in ("openai", "compatible"):
-            return await self._call_openai(system_prompt, user_prompt, effective_timeout)
-        else:
-            # Fallback to Anthropic format or generic completion
-            return await self._call_anthropic(system_prompt, user_prompt, effective_timeout)
+        try:
+            if self.provider == "anthropic":
+                res = await self._call_anthropic(system_prompt, user_prompt, effective_timeout)
+            elif self.provider in ("gemini", "google"):
+                res = await self._call_gemini(system_prompt, user_prompt, effective_timeout)
+            elif self.provider in ("openai", "compatible"):
+                res = await self._call_openai(system_prompt, user_prompt, effective_timeout)
+            else:
+                res = await self._call_anthropic(system_prompt, user_prompt, effective_timeout)
+
+            duration_ms = (time.perf_counter() - start_time) * 1000
+            metrics.record_gemini_call("success", duration_ms)
+            return res
+        except AITimeoutError:
+            duration_ms = (time.perf_counter() - start_time) * 1000
+            metrics.record_gemini_call("timeout", duration_ms)
+            raise
+        except AIRateLimitError:
+            duration_ms = (time.perf_counter() - start_time) * 1000
+            metrics.record_gemini_call("rate_limit", duration_ms)
+            raise
+        except Exception:
+            duration_ms = (time.perf_counter() - start_time) * 1000
+            metrics.record_gemini_call("error", duration_ms)
+            raise
 
     async def _call_gemini(self, system: str, user: str, timeout: float) -> str:
         model_name = self.model if "gemini" in self.model else "gemini-1.5-flash"

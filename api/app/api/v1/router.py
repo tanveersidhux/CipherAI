@@ -11,6 +11,7 @@ from app.api.v1.explanations import router as explanations_router
 from app.api.v1.exports import router as exports_router
 from app.api.v1.health import router as health_router
 from app.api.v1.me import router as me_router
+from app.api.v1.metrics import router as metrics_router
 from app.api.v1.scans import (
     analyze_message_endpoint,
     analyze_url_endpoint,
@@ -34,6 +35,7 @@ v1_router.include_router(cases_router)
 v1_router.include_router(exports_router)
 v1_router.include_router(me_router)
 v1_router.include_router(explanations_router)
+v1_router.include_router(metrics_router)
 
 # Singular /scan alias router for contract flexibility
 scan_alias_router = APIRouter(prefix="/scan", tags=["Scans"])
