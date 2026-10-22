@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipher-ai.local/schemas/external-evidence.schema.json",
+  "title": "ExternalEvidence",
+  "description": "Third-party intelligence lookup result with explicit provenance and timestamp.",
+  "type": "object",
+  "required": [
+    "source",
+    "checked_at",
+    "status",
+    "detail",
+    "reference_url",
+    "note"
+  ],
+  "properties": {
+    "source": {
+      "type": "string",
+      "description": "Provider or feed name (e.g. Google Safe Browsing, VirusTotal)."
+    },
+    "checked_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp when the query was executed."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "flagged",
+        "not_flagged",
+        "unknown",
+        "error",
+        "rate_limited"
+      ]
+    },
+    "detail": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Provider-specific category, score, or classification string."
+    },
+    "reference_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Link to the external provider's report page."
+    },
+    "note": {
+      "type": "string",
+      "description": "Mandatory disclaimer note (e.g., stating not_flagged is not proof of safety)."
+    }
+  },
+  "additionalProperties": false
+}

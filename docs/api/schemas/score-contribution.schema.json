@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipher-ai.local/schemas/score-contribution.schema.json",
+  "title": "ScoreContribution",
+  "description": "A discrete, bounded numeric point adjustment attributed to an indicator.",
+  "type": "object",
+  "required": [
+    "indicator_id",
+    "points",
+    "reason",
+    "evidence_kind",
+    "capped"
+  ],
+  "properties": {
+    "indicator_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_]+$",
+      "description": "Identifier of the triggering indicator."
+    },
+    "points": {
+      "type": "integer",
+      "description": "Integer point value contributed to the raw score."
+    },
+    "reason": {
+      "type": "string",
+      "description": "Plain language rationale for the point assignment."
+    },
+    "evidence_kind": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "inferred",
+        "external"
+      ]
+    },
+    "capped": {
+      "type": "boolean",
+      "description": "True if a category cap reduced the point contribution."
+    }
+  },
+  "additionalProperties": false
+}

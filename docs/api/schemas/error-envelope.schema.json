@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipher-ai.local/schemas/error-envelope.schema.json",
+  "title": "ErrorEnvelope",
+  "description": "Standardized error response envelope returned by all API endpoints on non-2xx status.",
+  "type": "object",
+  "required": [
+    "error"
+  ],
+  "properties": {
+    "error": {
+      "type": "object",
+      "required": [
+        "code",
+        "message",
+        "details",
+        "request_id"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "VALIDATION_ERROR",
+            "INVALID_URL",
+            "INPUT_TOO_LARGE",
+            "UNAUTHENTICATED",
+            "FORBIDDEN",
+            "NOT_FOUND",
+            "RATE_LIMITED",
+            "DEPENDENCY_UNAVAILABLE",
+            "INTERNAL_ERROR"
+          ],
+          "description": "Stable error code string."
+        },
+        "message": {
+          "type": "string",
+          "description": "User-safe error explanation."
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "field",
+              "issue"
+            ],
+            "properties": {
+              "field": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "issue": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "request_id": {
+          "type": "string",
+          "description": "Unique trace UUID corresponding to the X-Request-ID response header."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

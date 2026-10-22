@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipher-ai.local/schemas/threat-report.schema.json",
+  "title": "ThreatReport",
+  "description": "Standardized canonical threat intelligence report contract.",
+  "type": "object",
+  "required": [
+    "report_id",
+    "schema_version",
+    "scan_type",
+    "created_at",
+    "input",
+    "assessment",
+    "indicators",
+    "score_breakdown",
+    "external_evidence",
+    "ai_explanation",
+    "recommended_actions",
+    "engine_version",
+    "processing"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "schema_version": {
+      "type": "string",
+      "default": "1.0"
+    },
+    "scan_type": {
+      "type": "string",
+      "enum": [
+        "url",
+        "message",
+        "email",
+        "batch_item"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "display_value",
+        "normalized_value",
+        "input_hash",
+        "input_length"
+      ],
+      "properties": {
+        "display_value": {
+          "type": "string",
+          "description": "Defanged or truncated safe representation."
+        },
+        "normalized_value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "input_hash": {
+          "type": "string",
+          "description": "SHA-256 hash of normalized input."
+        },
+        "input_length": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "assessment": {
+      "type": "object",
+      "required": [
+        "risk_score",
+        "risk_level",
+        "confidence",
+        "verdict_label",
+        "limitations"
+      ],
+      "properties": {
+        "risk_score": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical",
+            "inconclusive"
+          ]
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "verdict_label": {
+          "type": "string"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "indicators": {
+      "type": "array",
+      "items": {
+        "$ref": "indicator.schema.json"
+      }
+    },
+    "score_breakdown": {
+      "type": "array",
+      "items": {
+        "$ref": "score-contribution.schema.json"
+      }
+    },
+    "external_evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "external-evidence.schema.json"
+      }
+    },
+    "ai_explanation": {
+      "$ref": "ai-explanation.schema.json"
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "$ref": "recommended-action.schema.json"
+      }
+    },
+    "engine_version": {
+      "type": "string"
+    },
+    "processing": {
+      "type": "object",
+      "required": [
+        "duration_ms",
+        "ai_status",
+        "external_lookup_status"
+      ],
+      "properties": {
+        "duration_ms": {
+          "type": "integer"
+        },
+        "ai_status": {
+          "type": "string",
+          "enum": [
+            "used",
+            "fallback_used",
+            "disabled"
+          ]
+        },
+        "external_lookup_status": {
+          "type": "string",
+          "enum": [
+            "not_attempted",
+            "complete",
+            "partial",
+            "unavailable"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

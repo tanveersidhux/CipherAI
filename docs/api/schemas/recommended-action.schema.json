@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipher-ai.local/schemas/recommended-action.schema.json",
+  "title": "RecommendedAction",
+  "description": "An imperative defensive action recommended to the user based on threat level.",
+  "type": "object",
+  "required": [
+    "action_id",
+    "priority",
+    "text",
+    "applies_to_levels"
+  ],
+  "properties": {
+    "action_id": {
+      "type": "string",
+      "pattern": "^ACT_[A-Z0-9_]+$",
+      "description": "Identifier for the recommended defensive action."
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Priority rank starting at 1 (highest urgency)."
+    },
+    "text": {
+      "type": "string",
+      "description": "Imperative, specific guidance text."
+    },
+    "applies_to_levels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "low",
+          "medium",
+          "high",
+          "critical",
+          "inconclusive"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

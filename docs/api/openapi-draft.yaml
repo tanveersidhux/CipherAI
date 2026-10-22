@@ -1,0 +1,765 @@
+openapi: 3.1.0
+info:
+  title: CIPHER AI Threat Intelligence API
+  version: 1.0.0
+  description: |
+    Stateless REST API for CIPHER AI digital threat intelligence and risk assessment.
+    Provides deterministic lexical security analysis, AI explanation orchestration,
+    anonymous-session-scoped history, and risk dashboard telemetry.
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local development server
+  - url: https://api.cipher-ai.local/api/v1
+    description: Production environment
+
+paths:
+  /health:
+    get:
+      summary: Service Health Check
+      description: Returns service operational status, application version, environment, and dependency health.
+      operationId: getHealth
+      tags:
+        - System
+      responses:
+        '200':
+          description: Service is healthy.
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/X-Request-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service or critical dependency unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /scans/url:
+    post:
+      summary: Scan Suspicious URL
+      description: |
+        Performs offline lexical, structural, and indicator analysis on a submitted URL.
+        No outbound network requests to the target URL are made in the MVP.
+      operationId: scanUrl
+      tags:
+        - Scanning
+      parameters:
+        - $ref: '#/components/parameters/X-Session-ID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanUrlRequest'
+      responses:
+        '200':
+          description: Analysis complete. Returns canonical ThreatReport.
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/X-Request-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreatReport'
+        '413':
+          description: Input exceeds maximum URL length (2048 characters).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Input validation failure or malformed URL syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Client rate limit exceeded (30 scans per minute).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /scans/message:
+    post:
+      summary: Scan Scam Message
+      description: |
+        Analyzes message text for social engineering, urgency tactics, authority impersonation,
+        credential lures, and financial requests. Full raw text is never stored in persistence.
+      operationId: scanMessage
+      tags:
+        - Scanning
+      parameters:
+        - $ref: '#/components/parameters/X-Session-ID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanMessageRequest'
+      responses:
+        '200':
+          description: Analysis complete. Returns canonical ThreatReport.
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/X-Request-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreatReport'
+        '413':
+          description: Input exceeds maximum message length (5000 characters).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failure or unparsable message.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Rate limit exceeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /scans:
+    get:
+      summary: List Session Scans
+      description: Retrieves a paginated list of scans performed during the caller's active session.
+      operationId: listScans
+      tags:
+        - History
+      parameters:
+        - $ref: '#/components/parameters/X-Session-ID'
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Maximum number of records to return.
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Pagination cursor token.
+        - name: risk_level
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [low, medium, high, critical, inconclusive]
+          description: Filter by risk level.
+        - name: scan_type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [url, message, email, batch_item]
+          description: Filter by scan type.
+      responses:
+        '200':
+          description: Paginated scan summaries.
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/X-Request-ID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanListResponse'
+        '401':
+          description: Missing or invalid session identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /scans/{scan_id}:
+    get:
+      summary: Retrieve Scan Report
+      description: Returns the full ThreatReport for a previously executed scan.
+      operationId: getScanById
+      tags:
+        - History
+      parameters:
+        - name: scan_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/X-Session-ID'
+      responses:
+        '200':
+          description: Full ThreatReport found and returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThreatReport'
+        '403':
+          description: Access denied (scan belongs to a different session).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Scan not found or previously deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+    delete:
+      summary: Delete Scan
+      description: Soft-deletes a scan from the caller's session history.
+      operationId: deleteScanById
+      tags:
+        - History
+      parameters:
+        - name: scan_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/X-Session-ID'
+      responses:
+        '204':
+          description: Scan successfully deleted. No content returned.
+        '403':
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Scan not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /dashboard/summary:
+    get:
+      summary: Retrieve Dashboard Analytics
+      description: Aggregates threat metrics, distribution tiers, top indicators, and 14-day scan velocity.
+      operationId: getDashboardSummary
+      tags:
+        - Dashboard
+      parameters:
+        - $ref: '#/components/parameters/X-Session-ID'
+      responses:
+        '200':
+          description: Dashboard summary metrics.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummaryResponse'
+
+  # =========================================================================
+  # POST-MVP DRAFT ENDPOINTS
+  # =========================================================================
+  /cases:
+    post:
+      summary: "[POST-MVP] Create Investigation Case"
+      description: Draft endpoint for grouping scans into an investigative dossier.
+      operationId: createCase
+      tags:
+        - Cases (Post-MVP)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title:
+                  type: string
+                linked_scan_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '201':
+          description: Case created.
+
+  /cases/{case_id}/notes:
+    post:
+      summary: "[POST-MVP] Add Case Note"
+      description: Draft endpoint for appending investigator notes to a case.
+      operationId: addCaseNote
+      tags:
+        - Cases (Post-MVP)
+      parameters:
+        - name: case_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body:
+                  type: string
+                  maxLength: 5000
+      responses:
+        '201':
+          description: Note added.
+
+  /scans/email:
+    post:
+      summary: "[POST-MVP] Scan Raw Email (.eml)"
+      description: Draft endpoint for parsing RFC 822 email files, headers, and authentication.
+      operationId: scanEmail
+      tags:
+        - Scanning (Post-MVP)
+      responses:
+        '501':
+          description: Feature planned for Post-MVP.
+
+  /scans/batch:
+    post:
+      summary: "[POST-MVP] Batch Scanning"
+      description: Draft endpoint for bulk URL/message analysis.
+      operationId: scanBatch
+      tags:
+        - Scanning (Post-MVP)
+      responses:
+        '501':
+          description: Feature planned for Post-MVP.
+
+  /feedback:
+    post:
+      summary: "[POST-MVP] Submit Feedback"
+      description: Draft endpoint for false positive/negative evaluation reporting.
+      operationId: submitFeedback
+      tags:
+        - Feedback (Post-MVP)
+      responses:
+        '200':
+          description: Feedback received.
+
+components:
+  parameters:
+    X-Session-ID:
+      name: X-Session-ID
+      in: header
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: Client-scoped anonymous session UUID token for history isolation.
+
+  headers:
+    X-Request-ID:
+      schema:
+        type: string
+        format: uuid
+      description: Unique trace ID assigned to the request.
+
+  schemas:
+    ScanUrlRequest:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          minLength: 1
+          maxLength: 2048
+          description: The suspicious URL to be evaluated.
+        options:
+          type: object
+          properties:
+            use_ai:
+              type: boolean
+              default: true
+            persist:
+              type: boolean
+              default: true
+
+    ScanMessageRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 5000
+          description: Suspicious message body or snippet to analyze.
+        channel:
+          type: string
+          enum: [sms, email_body, chat, social, unknown]
+          default: unknown
+        options:
+          type: object
+          properties:
+            use_ai:
+              type: boolean
+              default: true
+            persist:
+              type: boolean
+              default: true
+
+    HealthResponse:
+      type: object
+      required:
+        - status
+        - app_version
+        - environment
+        - timestamp
+        - dependencies
+      properties:
+        status:
+          type: string
+          example: ok
+        app_version:
+          type: string
+          example: 1.0.0
+        environment:
+          type: string
+          example: development
+        timestamp:
+          type: string
+          format: date-time
+        dependencies:
+          type: object
+          required:
+            - database
+            - llm
+          properties:
+            database:
+              type: string
+              enum: [ok, unavailable, not_configured]
+            llm:
+              type: string
+              enum: [enabled, disabled, not_configured]
+
+    ScanSummary:
+      type: object
+      required:
+        - id
+        - scan_type
+        - display_value
+        - risk_score
+        - risk_level
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        scan_type:
+          type: string
+          enum: [url, message, email, batch_item]
+        display_value:
+          type: string
+        risk_score:
+          type: integer
+          minimum: 0
+          maximum: 100
+        risk_level:
+          type: string
+          enum: [low, medium, high, critical, inconclusive]
+        created_at:
+          type: string
+          format: date-time
+
+    ScanListResponse:
+      type: object
+      required:
+        - items
+        - next_cursor
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScanSummary'
+        next_cursor:
+          type: [string, "null"]
+
+    DashboardSummaryResponse:
+      type: object
+      required:
+        - total_scans
+        - by_risk_level
+        - by_scan_type
+        - recent_scans
+        - top_indicators
+        - time_series
+      properties:
+        total_scans:
+          type: integer
+        by_risk_level:
+          type: object
+          required: [low, medium, high, critical, inconclusive]
+          properties:
+            low: { type: integer }
+            medium: { type: integer }
+            high: { type: integer }
+            critical: { type: integer }
+            inconclusive: { type: integer }
+        by_scan_type:
+          type: object
+          required: [url, message]
+          properties:
+            url: { type: integer }
+            message: { type: integer }
+        recent_scans:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScanSummary'
+        top_indicators:
+          type: array
+          items:
+            type: object
+            required: [indicator_id, title, count]
+            properties:
+              indicator_id: { type: string }
+              title: { type: string }
+              count: { type: integer }
+        time_series:
+          type: array
+          items:
+            type: object
+            required: [date, count]
+            properties:
+              date: { type: string }
+              count: { type: integer }
+
+    ErrorEnvelope:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+            - details
+            - request_id
+          properties:
+            code:
+              type: string
+              enum:
+                - VALIDATION_ERROR
+                - INVALID_URL
+                - INPUT_TOO_LARGE
+                - UNAUTHENTICATED
+                - FORBIDDEN
+                - NOT_FOUND
+                - RATE_LIMITED
+                - DEPENDENCY_UNAVAILABLE
+                - INTERNAL_ERROR
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: object
+                required: [field, issue]
+                properties:
+                  field: { type: [string, "null"] }
+                  issue: { type: string }
+            request_id:
+              type: string
+
+    ThreatReport:
+      type: object
+      required:
+        - report_id
+        - schema_version
+        - scan_type
+        - created_at
+        - input
+        - assessment
+        - indicators
+        - score_breakdown
+        - external_evidence
+        - ai_explanation
+        - recommended_actions
+        - engine_version
+        - processing
+      properties:
+        report_id:
+          type: string
+          format: uuid
+        schema_version:
+          type: string
+        scan_type:
+          type: string
+          enum: [url, message, email, batch_item]
+        created_at:
+          type: string
+          format: date-time
+        input:
+          type: object
+          required: [display_value, normalized_value, input_hash, input_length]
+          properties:
+            display_value: { type: string }
+            normalized_value: { type: [string, "null"] }
+            input_hash: { type: string }
+            input_length: { type: integer }
+        assessment:
+          type: object
+          required: [risk_score, risk_level, confidence, verdict_label, limitations]
+          properties:
+            risk_score: { type: integer, minimum: 0, maximum: 100 }
+            risk_level: { type: string, enum: [low, medium, high, critical, inconclusive] }
+            confidence: { type: string, enum: [low, medium, high] }
+            verdict_label: { type: string }
+            limitations:
+              type: array
+              items: { type: string }
+        indicators:
+          type: array
+          items:
+            $ref: '#/components/schemas/Indicator'
+        score_breakdown:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScoreContribution'
+        external_evidence:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExternalEvidence'
+        ai_explanation:
+          $ref: '#/components/schemas/AIExplanation'
+        recommended_actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecommendedAction'
+        engine_version:
+          type: string
+        processing:
+          type: object
+          required: [duration_ms, ai_status, external_lookup_status]
+          properties:
+            duration_ms: { type: integer }
+            ai_status: { type: string, enum: [used, fallback_used, disabled] }
+            external_lookup_status: { type: string, enum: [not_attempted, complete, partial, unavailable] }
+
+    Indicator:
+      type: object
+      required:
+        - indicator_id
+        - category
+        - evidence_kind
+        - title
+        - description
+        - observed_value
+        - severity
+        - triggered
+      properties:
+        indicator_id: { type: string }
+        category:
+          type: string
+          enum: [url_structure, domain, homoglyph, redirect_shortener, credential_lure, urgency, impersonation, payment_request, contact_channel, attachment, reputation, other]
+        evidence_kind:
+          type: string
+          enum: [observed, inferred, external]
+        title: { type: string }
+        description: { type: string }
+        observed_value: { type: [string, "null"] }
+        severity:
+          type: string
+          enum: [info, low, medium, high, critical]
+        triggered: { type: boolean }
+
+    ScoreContribution:
+      type: object
+      required:
+        - indicator_id
+        - points
+        - reason
+        - evidence_kind
+        - capped
+      properties:
+        indicator_id: { type: string }
+        points: { type: integer }
+        reason: { type: string }
+        evidence_kind:
+          type: string
+          enum: [observed, inferred, external]
+        capped: { type: boolean }
+
+    ExternalEvidence:
+      type: object
+      required: [source, checked_at, status, detail, reference_url, note]
+      properties:
+        source: { type: string }
+        checked_at: { type: string, format: date-time }
+        status:
+          type: string
+          enum: [flagged, not_flagged, unknown, error, rate_limited]
+        detail: { type: [string, "null"] }
+        reference_url: { type: [string, "null"] }
+        note: { type: string }
+
+    AIExplanation:
+      type: object
+      required:
+        - summary
+        - key_findings
+        - user_guidance
+        - uncertainty_notes
+        - generated_by
+        - model
+        - validated
+      properties:
+        summary: { type: string, maxLength: 600 }
+        key_findings:
+          type: array
+          items:
+            type: object
+            required: [text, indicator_ids]
+            properties:
+              text: { type: string, maxLength: 250 }
+              indicator_ids:
+                type: array
+                items: { type: string }
+        user_guidance: { type: string }
+        uncertainty_notes: { type: string }
+        generated_by:
+          type: string
+          enum: [llm, deterministic_fallback]
+        model: { type: [string, "null"] }
+        validated: { type: boolean }
+
+    RecommendedAction:
+      type: object
+      required: [action_id, priority, text, applies_to_levels]
+      properties:
+        action_id: { type: string }
+        priority: { type: integer, minimum: 1 }
+        text: { type: string }
+        applies_to_levels:
+          type: array
+          items:
+            type: string
+            enum: [low, medium, high, critical, inconclusive]

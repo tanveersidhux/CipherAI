@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cipher-ai.local/schemas/indicator.schema.json",
+  "title": "Indicator",
+  "description": "An individual security finding detected during lexical or heuristic analysis.",
+  "type": "object",
+  "required": [
+    "indicator_id",
+    "category",
+    "evidence_kind",
+    "title",
+    "description",
+    "observed_value",
+    "severity",
+    "triggered"
+  ],
+  "properties": {
+    "indicator_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_]+$",
+      "description": "Stable uppercase identifier code, e.g., URL_IP_HOST."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "url_structure",
+        "domain",
+        "homoglyph",
+        "redirect_shortener",
+        "credential_lure",
+        "urgency",
+        "impersonation",
+        "payment_request",
+        "contact_channel",
+        "attachment",
+        "reputation",
+        "other"
+      ]
+    },
+    "evidence_kind": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "inferred",
+        "external"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable label for the indicator."
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed explanation of what the indicator signifies."
+    },
+    "observed_value": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The exact sanitized fragment that triggered the finding."
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "info",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
+    },
+    "triggered": {
+      "type": "boolean",
+      "description": "True if the indicator was detected in the asset."
+    }
+  },
+  "additionalProperties": false
+}

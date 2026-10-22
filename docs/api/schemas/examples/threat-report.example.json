@@ -1,0 +1,142 @@
+{
+  "report_id": "7f8b9c24-5d12-4c8e-a9b1-3e4f6a7b8c9d",
+  "schema_version": "1.0",
+  "scan_type": "url",
+  "created_at": "2026-10-22T15:30:00Z",
+  "input": {
+    "display_value": "hxxp://192.0.2.14:8080/secure/login/verify.php",
+    "normalized_value": "http://192.0.2.14:8080/secure/login/verify.php",
+    "input_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "input_length": 46
+  },
+  "assessment": {
+    "risk_score": 85,
+    "risk_level": "critical",
+    "confidence": "high",
+    "verdict_label": "Critical threat indicators identified",
+    "limitations": [
+      "Offline lexical analysis only; page content was not fetched or executed."
+    ]
+  },
+  "indicators": [
+    {
+      "indicator_id": "URL_IP_HOST",
+      "category": "domain",
+      "evidence_kind": "observed",
+      "title": "IP Address Used as Hostname",
+      "description": "The destination URL specifies a raw IP address rather than a registered domain name.",
+      "observed_value": "192.0.2.14",
+      "severity": "high",
+      "triggered": true
+    },
+    {
+      "indicator_id": "URL_NON_STANDARD_PORT",
+      "category": "url_structure",
+      "evidence_kind": "observed",
+      "title": "Non-Standard Network Port",
+      "description": "The URL specifies a custom port (8080) commonly associated with unmonitored proxy or testing endpoints.",
+      "observed_value": "8080",
+      "severity": "medium",
+      "triggered": true
+    },
+    {
+      "indicator_id": "URL_NO_HTTPS",
+      "category": "url_structure",
+      "evidence_kind": "observed",
+      "title": "Insecure Plaintext HTTP Scheme",
+      "description": "The URL transmits data in unencrypted plaintext.",
+      "observed_value": "http",
+      "severity": "low",
+      "triggered": true
+    },
+    {
+      "indicator_id": "URL_CREDENTIAL_PATH_KEYWORD",
+      "category": "credential_lure",
+      "evidence_kind": "inferred",
+      "title": "Credential Keywords in Path",
+      "description": "Path segments contain explicit references to login and account verification.",
+      "observed_value": "/secure/login/verify.php",
+      "severity": "high",
+      "triggered": true
+    }
+  ],
+  "score_breakdown": [
+    {
+      "indicator_id": "URL_IP_HOST",
+      "points": 35,
+      "reason": "Direct IP address host used to bypass domain reputation",
+      "evidence_kind": "observed",
+      "capped": false
+    },
+    {
+      "indicator_id": "URL_NON_STANDARD_PORT",
+      "points": 15,
+      "reason": "Custom port 8080 observed",
+      "evidence_kind": "observed",
+      "capped": false
+    },
+    {
+      "indicator_id": "URL_NO_HTTPS",
+      "points": 10,
+      "reason": "Unencrypted HTTP protocol",
+      "evidence_kind": "observed",
+      "capped": false
+    },
+    {
+      "indicator_id": "URL_CREDENTIAL_PATH_KEYWORD",
+      "points": 25,
+      "reason": "Path targets authentication credentials",
+      "evidence_kind": "inferred",
+      "capped": false
+    }
+  ],
+  "external_evidence": [],
+  "ai_explanation": {
+    "summary": "This link directs to an unencrypted raw numerical IP address on port 8080 with a login verification path. This pattern strongly suggests a credential phishing portal designed to evade domain reputation filters.",
+    "key_findings": [
+      {
+        "text": "The link connects directly to an IP address (192.0.2.14) instead of a recognized organization domain.",
+        "indicator_ids": [
+          "URL_IP_HOST"
+        ]
+      },
+      {
+        "text": "The path specifically requests login verification details over an unencrypted channel.",
+        "indicator_ids": [
+          "URL_CREDENTIAL_PATH_KEYWORD",
+          "URL_NO_HTTPS"
+        ]
+      }
+    ],
+    "user_guidance": "Do not enter passwords or personal data on this link. Close the page immediately and alert your security team.",
+    "uncertainty_notes": "Lexical analysis was performed without outbound network requests to verify live web server status.",
+    "generated_by": "llm",
+    "model": "claude-3-5-sonnet-20241022",
+    "validated": true
+  },
+  "recommended_actions": [
+    {
+      "action_id": "ACT_DO_NOT_CLICK",
+      "priority": 1,
+      "text": "Do not click or submit information to this address.",
+      "applies_to_levels": [
+        "high",
+        "critical"
+      ]
+    },
+    {
+      "action_id": "ACT_RESET_CREDENTIALS",
+      "priority": 2,
+      "text": "If you already entered passwords, immediately reset credentials on the official portal.",
+      "applies_to_levels": [
+        "critical"
+      ]
+    }
+  ],
+  "engine_version": "1.0.0",
+  "processing": {
+    "duration_ms": 1420,
+    "ai_status": "used",
+    "external_lookup_status": "not_attempted"
+  }
+}
