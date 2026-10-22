@@ -45,12 +45,12 @@ export function defangUrl(raw: string): string {
     const rest = schemeMatch[3]
 
     // Defang dots in the host/authority portion (handles domain and IP addresses)
-    const defangedHost = hostAndPort.replace(/\./g, '[.]')
+    const defangedHost = hostAndPort.replace(/(?<!\[)\.(?!\])/g, '[.]')
     return `${scheme}${defangedHost}${rest}`
   }
 
   // If no scheme was present, defang any dot preceding a known TLD or between word chars
-  return defanged.replace(/(\w+)\.(\w+)/g, '$1[.]$2')
+  return defanged.replace(/(?<!\[)\.(?!\])/g, '[.]')
 }
 
 /**

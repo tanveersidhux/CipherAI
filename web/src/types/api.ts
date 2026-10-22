@@ -4,67 +4,12 @@ import type {
   ThreatReport,
 } from './threat-report'
 
-export type ErrorCode =
-  | 'VALIDATION_ERROR'
-  | 'INVALID_URL'
-  | 'INPUT_TOO_LARGE'
-  | 'UNAUTHENTICATED'
-  | 'FORBIDDEN'
-  | 'NOT_FOUND'
-  | 'METHOD_NOT_ALLOWED'
-  | 'RATE_LIMITED'
-  | 'DEPENDENCY_UNAVAILABLE'
-  | 'INTERNAL_ERROR'
-
-export interface ErrorDetail {
-  field: string | null
-  issue: string
-}
-
-export interface ErrorEnvelope {
-  error: {
-    code: ErrorCode
-    message: string
-    details: ErrorDetail[]
-    request_id: string
-  }
-}
-
-/**
- * Standardized ApiError thrown by CipherApi methods on non-2xx responses.
- */
-export class ApiError extends Error {
-  readonly code: ErrorCode
-  readonly details: ErrorDetail[]
-  readonly request_id: string
-  readonly http_status: number
-
-  constructor(
-    code: ErrorCode,
-    message: string,
-    details: ErrorDetail[] = [],
-    request_id: string = 'req_mock_error_trace',
-    http_status: number = 400
-  ) {
-    super(message)
-    this.name = 'ApiError'
-    this.code = code
-    this.details = details
-    this.request_id = request_id
-    this.http_status = http_status
-    Object.setPrototypeOf(this, ApiError.prototype)
-  }
-
-  static fromEnvelope(envelope: ErrorEnvelope, httpStatus: number): ApiError {
-    return new ApiError(
-      envelope.error.code,
-      envelope.error.message,
-      envelope.error.details,
-      envelope.error.request_id,
-      httpStatus
-    )
-  }
-}
+export type {
+  ErrorCode,
+  ErrorDetail,
+  ErrorEnvelope,
+} from '@/lib/api/errors'
+export { ApiError } from '@/lib/api/errors'
 
 export interface ScanSummary {
   id: string

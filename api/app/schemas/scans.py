@@ -14,21 +14,21 @@ class MessageChannel(str, Enum):
 
 
 class ScanOptions(BaseModel):
-    model_config = ConfigDict(extra="forbid", strict=True)
+    model_config = ConfigDict(extra="forbid", strict=False)
 
     use_ai: bool = Field(default=True, description="Request AI-generated explanation when enabled.")
     persist: bool = Field(default=True, description="Persist threat report to history store.")
 
 
 class UrlScanRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid", strict=True)
+    model_config = ConfigDict(extra="forbid", strict=False)
 
     url: str = Field(description="Target URL to analyze.")
     options: ScanOptions = Field(default_factory=ScanOptions)
 
 
 class MessageScanRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid", strict=True)
+    model_config = ConfigDict(extra="forbid", strict=False)
 
     message: str = Field(description="Message body text to analyze.")
     channel: MessageChannel = Field(

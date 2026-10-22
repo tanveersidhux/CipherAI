@@ -51,12 +51,16 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   VALIDATION_ERROR: 'The submitted input did not pass format validation. Please check your entry and try again.',
   INVALID_URL: 'The provided string does not conform to valid URL syntax. Please enter a valid http or https link.',
   INPUT_TOO_LARGE: 'Input exceeds the maximum allowed character limit (2,048 chars for URLs, 5,000 for messages).',
+  PAYLOAD_TOO_LARGE: 'Input exceeds the maximum allowed character limit (2,048 chars for URLs, 5,000 for messages).',
   UNAUTHENTICATED: 'Your current session could not be authenticated. A new anonymous session has been initiated.',
   FORBIDDEN: 'You do not have permission to view or modify this scan.',
   NOT_FOUND: 'The requested threat report could not be found or has been deleted.',
   METHOD_NOT_ALLOWED: 'The requested HTTP method is not supported for this endpoint.',
   RATE_LIMITED: 'Rate limit reached. Please wait a moment before running another scan.',
   DEPENDENCY_UNAVAILABLE: 'The CIPHER AI scanning engine is temporarily unreachable. Your input has been preserved.',
+  TIMEOUT: 'The security analysis request timed out. Please check connection and retry.',
+  NETWORK_ERROR: 'Cannot reach the CIPHER AI backend service. Please check network connectivity.',
+  INVALID_RESPONSE: 'Received an unexpected response format from the security evaluation service.',
   INTERNAL_ERROR: 'An unexpected processing error occurred while analyzing the target. Please try again.',
 }
 

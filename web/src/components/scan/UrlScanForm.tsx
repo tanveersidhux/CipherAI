@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { Link2, ArrowRight, Loader2, Sparkles } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Link2, ArrowRight, Loader2, Sparkles, HelpCircle } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { validateUrlInput } from '@/lib/validation/scan-validation'
+import { validateUrlInput } from '@/lib/validation'
 import { cn } from '@/lib/utils'
 
 export interface UrlScanFormProps {
@@ -10,17 +10,47 @@ export interface UrlScanFormProps {
   isSubmitting?: boolean
   className?: string
   autoFocus?: boolean
+  initialValue?: string
 }
+
+const SAMPLE_URLS = [
+  {
+    label: 'Suspicious Login Demo',
+    url: 'https://secure-login.example.test/verify-account',
+  },
+  {
+    label: 'IP Host Mask Demo',
+    url: 'https://192.0.2.1/update-account',
+  },
+  {
+    label: 'Subdomain Phish Demo',
+    url: 'https://account.paypal.com.notice-alert.example.test/auth',
+  },
+]
 
 export function UrlScanForm({
   onSubmit,
   isSubmitting = false,
   className,
   autoFocus = false,
+  initialValue = '',
 }: UrlScanFormProps) {
-  const [url, setUrl] = useState('')
+  const [url, setUrl] = useState(initialValue)
   const [touched, setTouched] = useState(false)
   const [useAi, setUseAi] = useState(true)
+  const [elapsedSlow, setElapsedSlow] = useState(false)
+
+  // Track slow requests > 8s
+  useEffect(() => {
+    if (!isSubmitting) return
+    const timer = setTimeout(() => {
+      setElapsedSlow(true)
+    }, 8000)
+    return () => {
+      clearTimeout(timer)
+      setElapsedSlow(false)
+    }
+  }, [isSubmitting])
 
   const validation = validateUrlInput(url)
   const hasError = touched && !validation.isValid && url.length > 0
@@ -29,8 +59,17 @@ export function UrlScanForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setTouched(true)
-    if (!validation.isValid) return
+    if (!validation.isValid) {
+      const inputEl = document.getElementById('url-scan-input')
+      if (inputEl) inputEl.focus()
+      return
+    }
     await onSubmit(url.trim(), { use_ai: useAi, persist: true })
+  }
+
+  const handleSelectSample = (sampleUrl: string) => {
+    setUrl(sampleUrl)
+    setTouched(true)
   }
 
   return (
@@ -77,7 +116,36 @@ export function UrlScanForm({
             Enter a complete web address. Lexical analysis is offline and does not visit or execute the target.
           </p>
         )}
+
+        {/* Demo Sample Input Chips */}
+        <div className="flex items-center gap-1.5 flex-wrap pt-1 text-xs">
+          <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+            <HelpCircle className="h-3 w-3" /> Samples:
+          </span>
+          {SAMPLE_URLS.map((sample, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handleSelectSample(sample.url)}
+              disabled={isSubmitting}
+              className="rounded-md border border-border/60 bg-muted/40 hover:bg-muted px-2 py-0.5 text-[11px] text-foreground transition-colors disabled:opacity-50"
+            >
+              {sample.label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Elapsed time notice */}
+      {elapsedSlow && isSubmitting && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="rounded-md bg-amber-500/10 border border-amber-500/30 p-2.5 text-xs text-amber-700 dark:text-amber-400"
+        >
+          This is taking longer than usual. Performing thorough threat engine inspection...
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-muted-foreground hover:text-foreground">

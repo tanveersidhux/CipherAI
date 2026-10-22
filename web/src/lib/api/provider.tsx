@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react'
 import type { CipherApi } from '@/types/api'
-import { MockCipherApi } from './mocks/mock-client'
+import { HttpCipherApi } from './http-client'
 
 export const CipherApiContext = createContext<CipherApi | null>(null)
 
@@ -11,10 +11,10 @@ export interface CipherApiProviderProps {
 
 /**
  * Provides the CipherApi instance to the entire application.
- * Defaults to MockCipherApi in Phase 02; swapped for HttpCipherApi in Phase 06.
+ * Defaults to HttpCipherApi in Phase 06 connecting directly to FastAPI backend.
  */
 export function CipherApiProvider({ api, children }: CipherApiProviderProps) {
-  const client = useMemo(() => api ?? new MockCipherApi(), [api])
+  const client = useMemo(() => api ?? new HttpCipherApi(), [api])
 
   return (
     <CipherApiContext.Provider value={client}>
@@ -29,9 +29,7 @@ export function CipherApiProvider({ api, children }: CipherApiProviderProps) {
 export function useCipherApi(): CipherApi {
   const context = useContext(CipherApiContext)
   if (!context) {
-    throw new Error('useCipherApi must be used within a CipherApiProvider')
+    return new HttpCipherApi()
   }
   return context
 }
-
-export * from '@/types/api'

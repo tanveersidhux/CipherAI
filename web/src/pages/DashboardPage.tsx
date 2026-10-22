@@ -12,11 +12,13 @@ import { RiskDistributionChart } from '@/components/charts/RiskDistributionChart
 import { ScanTrendChart } from '@/components/charts/ScanTrendChart'
 import { LoadingSkeleton } from '@/components/common/LoadingSkeleton'
 import { ErrorState } from '@/components/common/ErrorState'
+import { EmptyState } from '@/components/common/EmptyState'
 import { RiskBadge } from '@/components/report/RiskBadge'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 
 export default function DashboardPage() {
+  const navigate = useNavigate()
   const { data, loading, error, refetch } = useDashboardSummary()
 
   if (loading) {
@@ -27,6 +29,34 @@ export default function DashboardPage() {
     return (
       <div className="py-12 max-w-md mx-auto">
         <ErrorState error={error} onRetry={refetch} />
+      </div>
+    )
+  }
+
+  // Honest Empty State when no scans have been performed this session
+  if (data.total_scans === 0) {
+    return (
+      <div className="space-y-8 py-2 md:py-6">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-primary font-semibold text-xs tracking-wider uppercase">
+            <BarChart3 className="h-4 w-4" />
+            <span>Operational Threat Metrics</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Intelligence Dashboard
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Aggregate security metrics, detection frequency, and risk distribution.
+          </p>
+        </div>
+
+        <EmptyState
+          title="No Scans in Current Session"
+          description="No suspicious URLs or scam messages have been analyzed in this session yet. Run your first analysis to see real-time detection metrics and risk breakdowns."
+          actionLabel="Analyze First Target"
+          onAction={() => navigate('/scan/url')}
+          className="py-16"
+        />
       </div>
     )
   }

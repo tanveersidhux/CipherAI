@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { MessageSquareWarning, ArrowRight, Loader2, Sparkles } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { MessageSquareWarning, ArrowRight, Loader2, Sparkles, HelpCircle } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { validateMessageInput, MESSAGE_MAX_LENGTH } from '@/lib/validation/scan-validation'
+import { validateMessageInput, MESSAGE_MAX_LENGTH } from '@/lib/validation'
 import { cn } from '@/lib/utils'
 
 export type MessageChannel = 'sms' | 'email_body' | 'chat' | 'social' | 'unknown'
@@ -15,28 +15,71 @@ export interface MessageScanFormProps {
   ) => Promise<void>
   isSubmitting?: boolean
   className?: string
+  initialValue?: string
 }
+
+const SAMPLE_MESSAGES = [
+  {
+    label: 'Urgent Account Freeze',
+    channel: 'sms' as MessageChannel,
+    text: 'URGENT: Your account has been suspended due to unauthorized access. Click here immediately to verify your identity: http://secure-verify.example.test',
+  },
+  {
+    label: 'Package Delivery Scam',
+    channel: 'sms' as MessageChannel,
+    text: 'USPS: Your package could not be delivered due to an incorrect address. A $1.50 redelivery fee is required. Update details: http://parcel-redelivery.example.test',
+  },
+  {
+    label: 'Gift Card / Lottery',
+    channel: 'chat' as MessageChannel,
+    text: 'Congratulations! You have been selected to receive a $1,000 Amazon gift card. Claim your voucher right now: http://claim-rewards.example.test',
+  },
+]
 
 export function MessageScanForm({
   onSubmit,
   isSubmitting = false,
   className,
+  initialValue = '',
 }: MessageScanFormProps) {
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState(initialValue)
   const [channel, setChannel] = useState<MessageChannel>('sms')
   const [touched, setTouched] = useState(false)
   const [useAi, setUseAi] = useState(true)
+  const [elapsedSlow, setElapsedSlow] = useState(false)
+
+  useEffect(() => {
+    if (!isSubmitting) return
+    const timer = setTimeout(() => {
+      setElapsedSlow(true)
+    }, 8000)
+    return () => {
+      clearTimeout(timer)
+      setElapsedSlow(false)
+    }
+  }, [isSubmitting])
 
   const validation = validateMessageInput(message)
   const isOverLimit = message.length > MESSAGE_MAX_LENGTH
   const hasError = (touched && !validation.isValid && message.length > 0) || isOverLimit
-  const canSubmit = !isSubmitting && message.trim().length > 0 && validation.isValid && !isOverLimit
+  const canSubmit =
+    !isSubmitting && message.trim().length > 0 && validation.isValid && !isOverLimit
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setTouched(true)
-    if (!validation.isValid || isOverLimit) return
+    if (!validation.isValid || isOverLimit) {
+      const textarea = document.getElementById('message-scan-input')
+      if (textarea) textarea.focus()
+      return
+    }
     await onSubmit(message.trim(), channel, { use_ai: useAi, persist: true })
+  }
+
+  const handleSelectSample = (sampleText: string, sampleChannel: MessageChannel) => {
+    setMessage(sampleText)
+    setChannel(sampleChannel)
+    setTouched(true)
   }
 
   return (
@@ -50,7 +93,10 @@ export function MessageScanForm({
             Suspicious Message Text
           </label>
           <div className="flex items-center gap-2">
-            <label htmlFor="message-channel-select" className="text-xs text-muted-foreground font-medium">
+            <label
+              htmlFor="message-channel-select"
+              className="text-xs text-muted-foreground font-medium"
+            >
               Channel:
             </label>
             <select
@@ -111,7 +157,36 @@ export function MessageScanForm({
             {message.length} / {MESSAGE_MAX_LENGTH}
           </span>
         </div>
+
+        {/* Demo Sample Input Chips */}
+        <div className="flex items-center gap-1.5 flex-wrap pt-1 text-xs">
+          <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+            <HelpCircle className="h-3 w-3" /> Samples:
+          </span>
+          {SAMPLE_MESSAGES.map((sample, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handleSelectSample(sample.text, sample.channel)}
+              disabled={isSubmitting}
+              className="rounded-md border border-border/60 bg-muted/40 hover:bg-muted px-2 py-0.5 text-[11px] text-foreground transition-colors disabled:opacity-50"
+            >
+              {sample.label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Elapsed time notice */}
+      {elapsedSlow && isSubmitting && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="rounded-md bg-amber-500/10 border border-amber-500/30 p-2.5 text-xs text-amber-700 dark:text-amber-400"
+        >
+          This is taking longer than usual. Performing thorough threat engine inspection...
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <label className="flex items-center gap-2 cursor-pointer select-none text-xs text-muted-foreground hover:text-foreground">
