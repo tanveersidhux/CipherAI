@@ -15,8 +15,8 @@ CIPHER AI is an AI-assisted digital security and threat intelligence platform. U
 | **PHASE 02** | UI/UX Design System, Page Layouts, Accessible Components, Web Shell | **COMPLETE** | [PHASE_02_REPORT.md](file:///docs/phase-reports/PHASE_02_REPORT.md) |
 | **PHASE 03** | Monorepo Scaffolding, FastAPI Foundation, Database Migration, Health API | **COMPLETE** | [PHASE_03_REPORT.md](file:///docs/phase-reports/PHASE_03_REPORT.md) |
 | **PHASE 04** | Core Security Engine, Lexical URL/Message Analysis, Risk Scoring | **COMPLETE** | [PHASE_04_REPORT.md](file:///docs/phase-reports/PHASE_04_REPORT.md) |
-| **PHASE 05** | Bounded AI Intelligence, Structured Prompts, Schema Validation | *NEXT* | [ai-spec.md](file:///docs/architecture/ai-spec.md) |
-| **PHASE 06** | Real Scan Endpoints, Scanning Workflows, Mock Replacement | *PLANNED* | [api-contracts.md](file:///docs/api/api-contracts.md) |
+| **PHASE 05** | Bounded AI Intelligence, Structured Prompts, Schema Validation | **COMPLETE** | [PHASE_05_REPORT.md](file:///docs/phase-reports/PHASE_05_REPORT.md) |
+| **PHASE 06** | Real Scan Endpoints, Scanning Workflows, Mock Replacement | *NEXT* | [api-contracts.md](file:///docs/api/api-contracts.md) |
 | **PHASE 07** | Persistence Layer, Anonymous Sessions, History, Dashboard Telemetry | *PLANNED* | [data-model.md](file:///docs/architecture/data-model.md) |
 
 ---
@@ -82,6 +82,7 @@ node scripts/check-no-secrets-in-web.mjs
 - [Backend Foundation Architecture](file:///docs/architecture/backend-foundation.md)
 - [Risk-Scoring Specification & Indicator Catalog](file:///docs/architecture/risk-scoring-spec.md)
 - [AI Safety and Explanation Specification](file:///docs/architecture/ai-spec.md)
+- [AI Layer Architecture & Prompt-Injection Defenses](file:///docs/ai-layer.md)
 - [Data Model & Persistence Specification](file:///docs/architecture/data-model.md)
 - [Draft Database Schema (SQL)](file:///docs/architecture/schema-draft.sql)
 - [Threat Model & Security Mitigation](file:///docs/security/threat-model.md)

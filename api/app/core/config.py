@@ -50,13 +50,19 @@ class Settings(BaseSettings):
     SUPABASE_JWT_SECRET: SecretStr | None = None
     DB_HEALTHCHECK_TIMEOUT_SECONDS: Annotated[float, Field(ge=0.1, le=30.0)] = 2.0
 
-    # LLM Intelligence Configuration
+    # LLM & AI Intelligence Configuration
     LLM_ENABLED: bool = False
-    LLM_PROVIDER: str = "gemini"
+    AI_ENABLED: bool | None = None
+    LLM_PROVIDER: str = "anthropic"
     LLM_API_KEY: SecretStr | None = None
-    LLM_MODEL: str = "gemini-2.5-flash"
-    LLM_TIMEOUT_SECONDS: Annotated[float, Field(ge=1.0, le=120.0)] = 15.0
-    LLM_MAX_OUTPUT_TOKENS: Annotated[int, Field(ge=64, le=16384)] = 1024
+    LLM_MODEL: str = "claude-3-5-sonnet-20241022"
+    LLM_BASE_URL: str | None = None
+    LLM_TIMEOUT_SECONDS: Annotated[float, Field(ge=1.0, le=120.0)] = 12.0
+    LLM_MAX_OUTPUT_TOKENS: Annotated[int, Field(ge=64, le=16384)] = 900
+    AI_MAX_INPUT_CHARS: Annotated[int, Field(ge=100, le=50000)] = 4000
+    AI_MAX_RETRIES: Annotated[int, Field(ge=0, le=3)] = 1
+    AI_CIRCUIT_BREAKER_ENABLED: bool = False
+    AI_CONCURRENCY_LIMIT: Annotated[int, Field(ge=1, le=20)] = 4
 
     @field_validator("CORS_ALLOWED_ORIGINS", mode="before")
     @classmethod
@@ -112,6 +118,12 @@ class Settings(BaseSettings):
                     )
                 if not parsed.netloc:
                     raise ValueError(f"Invalid CORS origin format in production: '{origin}'")
+
+        # Sync AI_ENABLED and LLM_ENABLED
+        if self.AI_ENABLED is not None:
+            self.LLM_ENABLED = self.AI_ENABLED
+        else:
+            self.AI_ENABLED = self.LLM_ENABLED
 
         # LLM check: If LLM is enabled but no API key is set, warn instead of crashing
         if self.LLM_ENABLED and not self.LLM_API_KEY:

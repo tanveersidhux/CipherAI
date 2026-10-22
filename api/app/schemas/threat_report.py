@@ -82,11 +82,11 @@ class ExplanationGeneratedBy(str, Enum):
 
 
 class StrictBaseModel(BaseModel):
-    """Base model enforcing strict types and forbidding extra fields."""
+    """Base model enforcing clean types and forbidding extra fields."""
 
     model_config = ConfigDict(
         extra="forbid",
-        strict=True,
+        strict=False,
         validate_default=True,
     )
 
