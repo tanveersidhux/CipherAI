@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
 
     # Cross-Origin Resource Sharing
-    CORS_ALLOWED_ORIGINS: list[str] = Field(
+    CORS_ALLOWED_ORIGINS: list[str] | str = Field(
         default_factory=lambda: ["http://localhost:5173", "http://127.0.0.1:5173"]
     )
 

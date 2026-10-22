@@ -66,6 +66,18 @@ async def check_database_health(settings: Settings) -> DatabaseHealthStatus:
                 # PostgREST root returns 200 or 404 (if OpenAPI is disabled)
                 if response.status_code in (200, 404):
                     status = "ok"
+                elif response.status_code == 401:
+                    # Supabase publishable keys require secret key on /rest/v1/; verify via Auth health
+                    auth_endpoint = f"{supabase_url}/auth/v1/health"
+                    auth_resp = await client.get(auth_endpoint, headers=headers)
+                    if auth_resp.status_code == 200:
+                        status = "ok"
+                    else:
+                        logger.warning(
+                            "Database health probe returned non-healthy HTTP status: %d",
+                            response.status_code,
+                        )
+                        status = "unavailable"
                 else:
                     logger.warning(
                         "Database health probe returned non-healthy HTTP status: %d",
