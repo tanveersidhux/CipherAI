@@ -18,6 +18,7 @@ build/
 *.egg-info/
 .next/
 out/
+web/dist/
 
 # Testing & Coverage
 coverage/
@@ -26,6 +27,7 @@ coverage/
 htmlcov/
 .pytest_cache/
 .vitest_cache/
+web/coverage/
 
 # IDE and System Files
 .vscode/

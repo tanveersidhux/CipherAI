@@ -18,6 +18,8 @@ CIPHER AI is structured as a decoupled monorepo comprising a single-page React f
 - **AI Threat Intelligence Orchestrator:** Consumes sanitized structured evidence packets, invoking an LLM with strict output schema validation and immediate deterministic fallback.
 - **Persistence Layer:** Supabase PostgreSQL with row-level security intent, supporting anonymous session isolation in MVP and seamless migration to Supabase Auth post-MVP.
 
+> **Implementation Note (Phase 02 / ADR-0006):** The frontend shell and design system foundation (`web/`) were scaffolded and fully operationalized with typed mock data matching Phase 01 schemas in Phase 02 to enable parallel frontend/backend development. Phase 03 verifies and extends this foundation without recreating it.
+
 ---
 
 ## 2. Architecture Diagrams

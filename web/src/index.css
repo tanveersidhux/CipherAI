@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 36.9%;
+
+    --primary: 175 77% 26%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 84% 4.9%;
+
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 16% 47%;
+    --ring: 175 77% 26%;
+    --radius: 0.5rem;
+
+    /* Semantic Risk Tokens - Light Theme */
+    --risk-low: 152 76% 96%;
+    --risk-low-foreground: 163 88% 20%;
+    --risk-low-border: 149 80% 80%;
+
+    --risk-medium: 48 100% 96%;
+    --risk-medium-foreground: 28 82% 31%;
+    --risk-medium-border: 48 96% 77%;
+
+    --risk-high: 33 100% 96%;
+    --risk-high-foreground: 15 86% 34%;
+    --risk-high-border: 33 97% 83%;
+
+    --risk-critical: 0 86% 97%;
+    --risk-critical-foreground: 0 70% 35%;
+    --risk-critical-border: 0 93% 89%;
+
+    --risk-inconclusive: 210 40% 96%;
+    --risk-inconclusive-foreground: 215 25% 27%;
+    --risk-inconclusive-border: 214 32% 84%;
+  }
+
+  .dark {
+    --background: 223 44% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --primary: 173 80% 40%;
+    --primary-foreground: 223 44% 6%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 223 44% 6%;
+
+    --border: 215 16% 47%;
+    --ring: 173 80% 40%;
+
+    /* Semantic Risk Tokens - Dark Theme */
+    --risk-low: 164 86% 16%;
+    --risk-low-foreground: 156 72% 52%;
+    --risk-low-border: 161 94% 24%;
+
+    --risk-medium: 21 92% 14%;
+    --risk-medium-foreground: 43 96% 56%;
+    --risk-medium-border: 22 82% 26%;
+
+    --risk-high: 13 81% 15%;
+    --risk-high-foreground: 27 96% 61%;
+    --risk-high-border: 14 74% 28%;
+
+    --risk-critical: 0 75% 15%;
+    --risk-critical-foreground: 0 91% 71%;
+    --risk-critical-border: 0 63% 31%;
+
+    --risk-inconclusive: 217 33% 18%;
+    --risk-inconclusive-foreground: 215 20% 65%;
+    --risk-inconclusive-border: 215 25% 27%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    min-height: 100vh;
+  }
+}
+
+/* Reduced Motion Compliance */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print-Friendly Stylesheet */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  header,
+  nav,
+  aside,
+  .no-print,
+  button,
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-expand {
+    display: block !important;
+  }
+
+  .shadow-sm,
+  .shadow-md,
+  .shadow-lg {
+    box-shadow: none !important;
+  }
+}
