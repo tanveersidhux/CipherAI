@@ -57,6 +57,7 @@ class Settings(BaseSettings):
     AI_ENABLED: bool | None = None
     LLM_PROVIDER: str = "anthropic"
     LLM_API_KEY: SecretStr | None = None
+    GEMINI_API_KEY: SecretStr | None = None
     LLM_MODEL: str = "claude-3-5-sonnet-20241022"
     LLM_BASE_URL: str | None = None
     LLM_TIMEOUT_SECONDS: Annotated[float, Field(ge=1.0, le=120.0)] = 12.0
@@ -150,6 +151,14 @@ class Settings(BaseSettings):
             self.LLM_ENABLED = self.AI_ENABLED
         else:
             self.AI_ENABLED = self.LLM_ENABLED
+
+        # Map GEMINI_API_KEY to LLM_API_KEY if not explicitly specified
+        if self.GEMINI_API_KEY and not self.LLM_API_KEY:
+            self.LLM_API_KEY = self.GEMINI_API_KEY
+            if self.LLM_PROVIDER in ("anthropic", ""):
+                self.LLM_PROVIDER = "gemini"
+                if self.LLM_MODEL == "claude-3-5-sonnet-20241022":
+                    self.LLM_MODEL = "gemini-1.5-flash"
 
         # LLM check: If LLM is enabled but no API key is set, warn instead of crashing
         if self.LLM_ENABLED and not self.LLM_API_KEY:

@@ -71,11 +71,66 @@ class HttpxLLMClient:
 
         if self.provider == "anthropic":
             return await self._call_anthropic(system_prompt, user_prompt, effective_timeout)
+        elif self.provider in ("gemini", "google"):
+            return await self._call_gemini(system_prompt, user_prompt, effective_timeout)
         elif self.provider in ("openai", "compatible"):
             return await self._call_openai(system_prompt, user_prompt, effective_timeout)
         else:
             # Fallback to Anthropic format or generic completion
             return await self._call_anthropic(system_prompt, user_prompt, effective_timeout)
+
+    async def _call_gemini(self, system: str, user: str, timeout: float) -> str:
+        model_name = self.model if "gemini" in self.model else "gemini-1.5-flash"
+        base_endpoint = self.base_url or "https://generativelanguage.googleapis.com"
+        url = f"{base_endpoint}/v1beta/models/{model_name}:generateContent?key={self.api_key}"
+
+        headers = {
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "system_instruction": {
+                "parts": [{"text": system}],
+            },
+            "contents": [
+                {
+                    "role": "user",
+                    "parts": [{"text": user}],
+                }
+            ],
+            "generationConfig": {
+                "responseMimeType": "application/json",
+                "maxOutputTokens": self.max_tokens,
+            },
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                resp = await client.post(url, headers=headers, json=payload)
+        except httpx.TimeoutException as exc:
+            raise AITimeoutError(f"Gemini request timed out after {timeout}s") from exc
+        except httpx.NetworkError as exc:
+            raise AINetworkError(f"Gemini network connection failed: {exc}") from exc
+        except Exception as exc:
+            raise AINetworkError(f"Unexpected connection error: {exc}") from exc
+
+        if resp.status_code == 429:
+            raise AIRateLimitError("Gemini API rate limit exceeded")
+        if resp.status_code >= 400:
+            raise AIProviderError(
+                f"Gemini API returned status {resp.status_code}",
+                status_code=resp.status_code,
+            )
+
+        try:
+            data = resp.json()
+            candidates = data.get("candidates", [])
+            if not candidates:
+                raise AIProviderError("Gemini returned empty candidates")
+            parts = candidates[0].get("content", {}).get("parts", [])
+            text_parts = [p.get("text", "") for p in parts]
+            return "".join(text_parts)
+        except Exception as exc:
+            raise AIProviderError(f"Failed to parse Gemini response: {exc}") from exc
 
     async def _call_anthropic(self, system: str, user: str, timeout: float) -> str:
         url = f"{self.base_url or 'https://api.anthropic.com'}/v1/messages"

@@ -18,6 +18,9 @@ CIPHER AI is an AI-assisted digital security and threat intelligence platform. U
 | **PHASE 05** | Bounded AI Intelligence, Structured Prompts, Schema Validation | **COMPLETE** | [PHASE_05_REPORT.md](file:///docs/phase-reports/PHASE_05_REPORT.md) |
 | **PHASE 06** | Real Scan Endpoints, Scanning Workflows, Mock Replacement | **COMPLETE** | [PHASE_06_REPORT.md](file:///docs/phase-reports/PHASE_06_REPORT.md) |
 | **PHASE 07** | Persistence Layer, Scan History, Dashboard, Cases, Notes, Auth | **COMPLETE** | [PHASE_07_REPORT.md](file:///docs/phase-reports/PHASE_07_REPORT.md) |
+| **PHASE 08** | Advanced Threat Features, Reputation APIs, Email Forensics, Batches | **COMPLETE** | [PHASE_08_REPORT.md](file:///docs/phase-reports/PHASE_08_REPORT.md) |
+| **PHASE 09** | Security Hardening, RLS Enforcement, SSRF Protection, Penetration Tests | **COMPLETE** | [PHASE_09_REPORT.md](file:///docs/phase-reports/PHASE_09_REPORT.md) |
+| **PHASE 10** | Production Deployment, Infrastructure Config, Cloud Verification | **COMPLETE** | [PHASE_10_REPORT.md](file:///docs/phase-reports/PHASE_10_REPORT.md) |
 
 
 ---
@@ -89,6 +92,7 @@ node scripts/check-no-secrets-in-web.mjs
 - [Threat Model & Security Mitigation](file:///docs/security/threat-model.md)
 
 ### 3. Setup & Development Guides
+- [Production Deployment Guide](file:///docs/deployment.md)
 - [Local Development Guide](file:///docs/setup/local-development.md)
 - [Database Setup & Migration Guide](file:///docs/setup/database-setup.md)
 - [Contributing & PR Guidelines](file:///CONTRIBUTING.md)
