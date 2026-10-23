@@ -26,7 +26,7 @@ export type HealthResult =
   | { ok: true; data: HealthData; request_id?: string }
   | { ok: false; reason: HealthFailureReason; status_code?: number; request_id?: string }
 
-const TIMEOUT_MS = 5000
+const TIMEOUT_MS = 8000
 
 /**
  * Structural validation runtime guard for HealthData payload.

@@ -26,7 +26,7 @@ export interface ApiFetchResult<T> {
 }
 
 export const DEFAULT_TIMEOUT_SCANS_MS = 20000
-export const DEFAULT_TIMEOUT_EXPLANATIONS_MS = 20000
+export const DEFAULT_TIMEOUT_EXPLANATIONS_MS = 45000
 export const DEFAULT_TIMEOUT_HEALTH_MS = 5000
 
 /**

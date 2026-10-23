@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Layers, Plus, Upload, CheckCircle, AlertTriangle, Clock, XCircle, ArrowRight } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Layers } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 

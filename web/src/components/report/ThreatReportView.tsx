@@ -15,7 +15,7 @@
  */
 
 import React, { useEffect, useState } from 'react'
-import { Clock, Cpu, HelpCircle, Layers, Printer, RotateCcw } from 'lucide-react'
+import { Clock, Cpu, HelpCircle, Layers, RotateCcw } from 'lucide-react'
 import type { ThreatReport } from '@/types/threat-report'
 import { RiskGauge } from '@/components/report/RiskGauge'
 import { RiskBadge } from '@/components/report/RiskBadge'
@@ -62,9 +62,6 @@ export function ThreatReportView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [report.report_id])
 
-  const handlePrint = () => {
-    window.print()
-  }
 
   const isInconclusive =
     report.assessment.risk_level === 'inconclusive' ||
@@ -190,7 +187,19 @@ export function ThreatReportView({
         </div>
       </section>
 
-      {/* 3. Inconclusive or Limited Evidence Notice */}
+      {/* 3. Gemini Advisory Intelligence Explanation (Hero AI Feature) */}
+      <section aria-label="Advisory Intelligence Explanation">
+        <ExplanationPanel
+          status={explanationHook.status}
+          data={explanationHook.data}
+          error={explanationHook.error}
+          onRetry={explanationHook.retry}
+          onSelectIndicator={(id) => setHighlightedIndicatorId(id)}
+          knownIndicators={report.indicators}
+        />
+      </section>
+
+      {/* 4. Inconclusive or Limited Evidence Notice */}
       {isInconclusive && (
         <section
           aria-label="Inconclusive Notice"
@@ -217,7 +226,7 @@ export function ThreatReportView({
         onReputationRefreshed={(updated) => setReport(updated)}
       />
 
-      {/* 4. Mandatory Disclaimer Banner */}
+      {/* 5. Mandatory Disclaimer Banner */}
       <section aria-label="Disclaimer">
         <DisclaimerBanner
           customText={
@@ -228,7 +237,7 @@ export function ThreatReportView({
         />
       </section>
 
-      {/* 5. Evidence and Indicators List */}
+      {/* 6. Evidence and Indicators List */}
       <section aria-label="Detailed Evidence">
         <h2 className="text-base font-bold text-foreground mb-4">
           Observable Indicators & Forensic Findings
@@ -239,7 +248,7 @@ export function ThreatReportView({
         />
       </section>
 
-      {/* 6. Score Breakdown Table */}
+      {/* 7. Score Breakdown Table */}
       <section aria-labelledby="score-breakdown-heading" className="space-y-3">
         <h3 id="score-breakdown-heading" className="text-sm font-semibold tracking-wide uppercase text-foreground">
           Mathematical Score Breakdown
@@ -250,20 +259,6 @@ export function ThreatReportView({
         />
       </section>
 
-      {/* 7. Asynchronous AI Explanation Panel */}
-      <section aria-label="Advisory Intelligence Explanation">
-        <h2 className="text-base font-bold text-foreground mb-4">
-          Advisory Intelligence Explanation
-        </h2>
-        <ExplanationPanel
-          status={explanationHook.status}
-          data={explanationHook.data}
-          error={explanationHook.error}
-          onRetry={explanationHook.retry}
-          onSelectIndicator={(id) => setHighlightedIndicatorId(id)}
-          knownIndicators={report.indicators}
-        />
-      </section>
 
       {/* 8. Processing Metadata Footer */}
       <footer

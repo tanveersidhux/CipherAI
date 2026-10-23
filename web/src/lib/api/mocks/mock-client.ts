@@ -9,7 +9,7 @@ import type {
   ScanUrlInput,
 } from '@/types/api'
 import { ApiError } from '@/types/api'
-import type { RiskLevel, ThreatReport } from '@/types/threat-report'
+import type { ThreatReport } from '@/types/threat-report'
 import {
   ALL_MOCK_FIXTURES,
   adversarialReportFixture,

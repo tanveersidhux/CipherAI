@@ -5,12 +5,10 @@
 
 import type {
   CipherApi,
-  DashboardSummary,
   DashboardSummaryResponse,
   ListScansParams,
   ListScansResponse,
   ScanMessageInput,
-  ScanSummary,
   ScanSummaryItem,
   ScanUrlInput,
   UpdateScanParams,
@@ -22,7 +20,7 @@ import type {
   CaseNoteResponse,
 } from '@/types/api'
 import { ApiError } from './errors'
-import type { RiskLevel, ThreatReport } from '@/types/threat-report'
+import type { ThreatReport } from '@/types/threat-report'
 import { scanUrl as fetchScanUrl, scanMessage as fetchScanMessage } from './scan'
 import { truncateForDisplay } from '@/lib/defang'
 import { apiFetch } from './client'
@@ -121,6 +119,16 @@ export class HttpCipherApi implements CipherApi {
       const found = this.sessionReports.get(scanId)
       if (found) {
         return found
+      }
+      try {
+        const raw = sessionStorage.getItem('cipher_session_reports')
+        if (raw) {
+          const map = new Map<string, ThreatReport>(JSON.parse(raw))
+          const fromStorage = map.get(scanId)
+          if (fromStorage) return fromStorage
+        }
+      } catch {
+        // ignore
       }
       throw err
     }

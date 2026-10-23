@@ -25,7 +25,7 @@ const MOBILE_NAV_ITEMS = [
 export function MobileNav() {
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 h-16 border-t border-border/40 bg-card/90 backdrop-blur-md px-2 flex items-center justify-around safe-area-inset-bottom"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-40 h-16 border-t border-border/40 bg-card/90 backdrop-blur-md px-1 flex items-center justify-around safe-area-inset-bottom overflow-x-auto custom-scrollbar"
       aria-label="Mobile navigation bar"
     >
       {MOBILE_NAV_ITEMS.map((item) => {

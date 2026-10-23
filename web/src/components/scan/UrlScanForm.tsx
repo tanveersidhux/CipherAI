@@ -156,8 +156,12 @@ export function UrlScanForm({
             disabled={isSubmitting}
             className="rounded border-border text-primary focus:ring-primary h-4 w-4"
           />
-          <span className="inline-flex items-center gap-1 font-medium">
-            <Sparkles className="h-3.5 w-3.5 text-primary" /> Enable AI Explanation
+          <span className="inline-flex items-center gap-1.5 font-medium">
+            <Sparkles className="h-3.5 w-3.5 text-primary animate-pulse" />
+            <span>Gemini 3.5 Flash AI Intelligence</span>
+            <span className="rounded-full bg-primary/10 border border-primary/20 px-1.5 py-0.2 text-[10px] text-primary font-semibold">
+              Heavy AI
+            </span>
           </span>
         </label>
 

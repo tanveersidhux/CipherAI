@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Layers, ArrowLeft, RefreshCw, XCircle, CheckCircle, Clock, ExternalLink, Ban } from 'lucide-react'
+import { ArrowLeft, ExternalLink, Ban, Loader2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
@@ -33,7 +33,7 @@ export default function BatchDetailPage() {
   const [cancelling, setCancelling] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  const fetchStatus = async () => {
+  const fetchStatus = useCallback(async () => {
     if (!batchId) return
     try {
       const [batchRes, itemsRes] = await Promise.all([
@@ -48,21 +48,21 @@ export default function BatchDetailPage() {
         const iData = await itemsRes.json()
         setItems(iData.items || [])
       }
-    } catch (err: any) {
-      setErrorMsg(err.message || 'Error fetching batch status.')
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'Error fetching batch status.')
     } finally {
       setLoading(false)
     }
-  }
+  }, [batchId])
 
   useEffect(() => {
     fetchStatus()
-    const isTerminal = batch && ['completed', 'partial_failed', 'cancelled'].includes(batch.status)
+    const isTerminal = Boolean(batch?.status && ['completed', 'partial_failed', 'cancelled'].includes(batch.status))
     if (isTerminal) return
 
     const timer = setInterval(fetchStatus, 2000)
     return () => clearInterval(timer)
-  }, [batchId, batch?.status])
+  }, [fetchStatus, batch])
 
   const handleCancel = async () => {
     if (!batchId) return
@@ -104,6 +104,19 @@ export default function BatchDetailPage() {
           </Button>
         )}
       </div>
+
+      {errorMsg && (
+        <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">
+          {errorMsg}
+        </div>
+      )}
+
+      {loading && !batch && (
+        <div className="flex items-center justify-center p-12 text-muted-foreground text-sm gap-2">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Loading batch details...</span>
+        </div>
+      )}
 
       {batch && (
         <Card className="border-border/60 bg-card/85 shadow-md">

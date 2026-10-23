@@ -34,11 +34,35 @@ const DEFAULT_SESSION_CONTEXT: ScanSessionContextValue = {
 
 export const ScanSessionContext = createContext<ScanSessionContextValue>(DEFAULT_SESSION_CONTEXT)
 
+const STORAGE_KEY_REPORTS = 'cipher_session_reports'
+const STORAGE_KEY_SUMMARIES = 'cipher_session_summaries'
+
+function loadReportsFromStorage(): Map<string, ThreatReport> {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY_REPORTS)
+    if (!raw) return new Map()
+    const arr: [string, ThreatReport][] = JSON.parse(raw)
+    return new Map(arr)
+  } catch {
+    return new Map()
+  }
+}
+
+function loadSummariesFromStorage(): ScanSummary[] {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY_SUMMARIES)
+    if (!raw) return []
+    return JSON.parse(raw)
+  } catch {
+    return []
+  }
+}
+
 export function ScanSessionProvider({ children }: { children: React.ReactNode }) {
-  // Full ThreatReport objects stored in ephemeral memory (lost on page reload)
-  const [reportsMap, setReportsMap] = useState<Map<string, ThreatReport>>(() => new Map())
+  // Full ThreatReport objects stored in session memory + sessionStorage
+  const [reportsMap, setReportsMap] = useState<Map<string, ThreatReport>>(() => loadReportsFromStorage())
   // Non-sensitive summaries ordered newest first
-  const [summaries, setSummaries] = useState<ScanSummary[]>([])
+  const [summaries, setSummaries] = useState<ScanSummary[]>(() => loadSummariesFromStorage())
 
   const addScan = useCallback((report: ThreatReport) => {
     // 1. Create non-sensitive summary
@@ -59,12 +83,22 @@ export function ScanSessionProvider({ children }: { children: React.ReactNode })
     setReportsMap((prev) => {
       const next = new Map(prev)
       next.set(report.report_id, report)
+      try {
+        sessionStorage.setItem(STORAGE_KEY_REPORTS, JSON.stringify(Array.from(next.entries())))
+      } catch {
+        // quota exceeded or storage disabled
+      }
       return next
     })
 
     setSummaries((prev) => {
       const filtered = prev.filter((s) => s.id !== report.report_id)
       const next = [summary, ...filtered].slice(0, MAX_SESSION_SCANS)
+      try {
+        sessionStorage.setItem(STORAGE_KEY_SUMMARIES, JSON.stringify(next))
+      } catch {
+        // quota exceeded
+      }
       return next
     })
   }, [])
@@ -74,10 +108,30 @@ export function ScanSessionProvider({ children }: { children: React.ReactNode })
   const clear = useCallback(() => {
     setReportsMap(new Map())
     setSummaries([])
+    try {
+      sessionStorage.removeItem(STORAGE_KEY_REPORTS)
+      sessionStorage.removeItem(STORAGE_KEY_SUMMARIES)
+    } catch {
+      // ignore
+    }
   }, [])
 
   const getScanReport = useCallback(
-    (reportId: string) => reportsMap.get(reportId),
+    (reportId: string) => {
+      const found = reportsMap.get(reportId)
+      if (found) return found
+      // Fallback check directly from sessionStorage
+      try {
+        const raw = sessionStorage.getItem(STORAGE_KEY_REPORTS)
+        if (raw) {
+          const map = new Map<string, ThreatReport>(JSON.parse(raw))
+          return map.get(reportId)
+        }
+      } catch {
+        // ignore
+      }
+      return undefined
+    },
     [reportsMap]
   )
 

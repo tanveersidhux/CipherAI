@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useCipherApi } from '@/lib/api/client'
+import { useScanSession } from '@/context/ScanSessionProvider'
 import { ApiError } from '@/types/api'
 import type { FormStatus } from '@/types/ui'
 import type { ThreatReport } from '@/types/threat-report'
@@ -7,6 +8,7 @@ import { validateMessageInput, validateUrlInput } from '@/lib/validation/scan-va
 
 export function useScanForm() {
   const api = useCipherApi()
+  const session = useScanSession()
   const [status, setStatus] = useState<FormStatus>('idle')
   const [error, setError] = useState<ApiError | null>(null)
   const [validationError, setValidationError] = useState<string | null>(null)
@@ -27,6 +29,7 @@ export function useScanForm() {
 
       try {
         const report = await api.scanUrl({ url: rawUrl, options })
+        session.addScan(report)
         setResult(report)
         setStatus('success')
         return report
@@ -47,7 +50,7 @@ export function useScanForm() {
         return null
       }
     },
-    [api]
+    [api, session]
   )
 
   const scanMessage = useCallback(
@@ -73,6 +76,7 @@ export function useScanForm() {
           channel,
           options,
         })
+        session.addScan(report)
         setResult(report)
         setStatus('success')
         return report
@@ -93,7 +97,7 @@ export function useScanForm() {
         return null
       }
     },
-    [api]
+    [api, session]
   )
 
   const reset = useCallback(() => {

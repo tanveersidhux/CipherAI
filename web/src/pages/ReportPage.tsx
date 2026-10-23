@@ -37,11 +37,23 @@ export default function ReportPage() {
       })
       .catch((err) => {
         if (isMounted) {
-          setError(
-            err instanceof ApiError
-              ? err
-              : new ApiError('NOT_FOUND', 'Threat report not found.')
-          )
+          if (err instanceof ApiError && (err.code === 'UNAUTHENTICATED' || err.status === 401 || err.http_status === 401)) {
+            setError(
+              new ApiError(
+                'NOT_FOUND',
+                'Threat report not found or requires sign-in to access saved historical scans.',
+                [],
+                err.request_id || 'guest_unauth_trace',
+                404
+              )
+            )
+          } else {
+            setError(
+              err instanceof ApiError
+                ? err
+                : new ApiError('NOT_FOUND', 'Threat report not found.')
+            )
+          }
           setLoading(false)
         }
       })

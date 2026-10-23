@@ -5,9 +5,9 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { FolderLock, Plus, Filter, Loader2, ArrowRight, ShieldAlert, Clock } from 'lucide-react'
+import { FolderLock, Plus, Filter, Loader2, ShieldAlert, Clock } from 'lucide-react'
 import { useCipherApi } from '@/lib/api/client'
-import type { CasePriority, CaseResponse, CaseStatus } from '@/types/cases'
+import type { CasePriority, CaseResponse } from '@/types/cases'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'

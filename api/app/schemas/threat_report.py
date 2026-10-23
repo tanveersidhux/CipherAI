@@ -166,6 +166,11 @@ class Processing(StrictBaseModel):
 
 
 class ThreatReport(StrictBaseModel):
+    model_config = ConfigDict(
+        extra="ignore",
+        strict=False,
+        validate_default=True,
+    )
     report_id: str
     schema_version: str = "1.0"
     scan_type: ScanType
@@ -180,10 +185,17 @@ class ThreatReport(StrictBaseModel):
     engine_version: str
     processing: Processing
 
-    # Phase 07 Persistence fields (backward-compatible defaults)
+    # Phase 07 & History Persistence fields (backward-compatible defaults)
     scan_id: str | None = None
     persistence_status: Literal["saved", "not_saved_guest", "save_failed"] = "not_saved_guest"
     saved_at: str | None = None
+    id: str | None = None
+    title: str | None = None
+    is_pinned: bool = False
+    tags: list[str] = Field(default_factory=list)
+    case_ids: list[str] = Field(default_factory=list)
+    rescan_of_scan_id: str | None = None
+    user_id: str | None = None
 
     # Phase 08 Advanced Capabilities fields
     reputation_results: list[dict] | None = None

@@ -3,7 +3,6 @@
  */
 
 import React from 'react'
-import { Link } from 'react-router-dom'
 import { CheckCircle2, AlertTriangle, LogIn, HardDrive } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 

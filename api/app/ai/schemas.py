@@ -59,28 +59,28 @@ class StrictAIModel(BaseModel):
 class KeyFinding(StrictAIModel):
     """Individual evidence-grounded key finding citing indicator IDs."""
 
-    title: str = Field(..., max_length=120, description="Concise finding headline")
-    detail: str = Field(..., max_length=400, description="Plain language explanation")
+    title: str = Field(..., max_length=250, description="Concise finding headline")
+    detail: str = Field(..., max_length=1500, description="Plain language explanation")
     evidence_ids: list[str] = Field(
-        ..., min_length=1, description="One or more cited evidence/indicator IDs"
+        default_factory=list, description="One or more cited evidence/indicator IDs"
     )
 
 
 class RecommendedAction(StrictAIModel):
     """Prioritized defensive recommendation for the user."""
 
-    priority: ActionPriority = Field(..., description="Action priority level")
-    action: str = Field(..., max_length=240, description="Defensive guidance statement")
+    priority: ActionPriority = Field(default=ActionPriority.MEDIUM, description="Action priority level")
+    action: str = Field(..., max_length=1000, description="Defensive guidance statement")
 
 
 class AIExplanation(StrictAIModel):
     """Structured, evidence-grounded explanation produced by LLM or deterministic fallback."""
 
     summary: str = Field(
-        ..., max_length=600, description="Plain-language threat summary (max 600 chars)"
+        ..., max_length=2500, description="Plain-language threat summary"
     )
     risk_statement: str = Field(
-        ..., description="Risk narrative consistent with the deterministic risk level"
+        default="", max_length=1500, description="Risk narrative consistent with the deterministic risk level"
     )
     key_findings: list[KeyFinding] = Field(
         default_factory=list,
@@ -123,8 +123,13 @@ class ExplanationResponse(StrictAIModel):
     meta: ExplanationMeta
 
 
-class ExplainRequest(StrictAIModel):
+class ExplainRequest(BaseModel):
     """Request payload for POST /api/v1/explanations."""
+
+    model_config = ConfigDict(
+        extra="ignore",
+        validate_default=True,
+    )
 
     report: ThreatReport = Field(..., description="Complete Phase 04 ThreatReport object")
     audience_level: Literal["simple", "technical"] = Field(

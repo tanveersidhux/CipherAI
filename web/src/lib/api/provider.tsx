@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import type { CipherApi } from '@/types/api'
 import { HttpCipherApi } from './http-client'
+import { CipherApiContext } from './context'
 
-export const CipherApiContext = createContext<CipherApi | null>(null)
+export { CipherApiContext }
 
 export interface CipherApiProviderProps {
   api?: CipherApi

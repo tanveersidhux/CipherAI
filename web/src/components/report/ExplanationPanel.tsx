@@ -14,6 +14,8 @@ import {
   RefreshCw,
   AlertTriangle,
   ShieldAlert,
+  ShieldCheck,
+  Zap,
   Info,
 } from 'lucide-react'
 import type { ExplanationResponse } from '@/types/explanation'
@@ -22,6 +24,7 @@ import type { ApiError } from '@/lib/api/errors'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { CopyButton } from '@/components/common/CopyButton'
 import { cn } from '@/lib/utils'
 
 export interface ExplanationPanelProps {
@@ -153,36 +156,77 @@ export function ExplanationPanel({
       aria-labelledby="explanation-panel-title"
     >
       {/* Header Attribution & Provenance Badge */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-3">
-        <div className="flex items-center gap-2.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-4">
+        <div className="flex items-center gap-3">
           {isAI ? (
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-primary">
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary shadow-xs ring-1 ring-primary/25">
+              <Sparkles className="h-4 w-4 animate-pulse" aria-hidden="true" />
             </div>
           ) : (
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-muted text-muted-foreground">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
               <Cog className="h-4 w-4" aria-hidden="true" />
             </div>
           )}
           <div>
-            <h3 id="explanation-panel-title" className="text-sm font-bold text-foreground">
-              {isAI ? 'AI Threat Intelligence Analysis' : 'Standard Security Explanation'}
-            </h3>
-            <p className="text-[11px] text-muted-foreground">
-              {isAI
-                ? `Evidence-grounded model synthesis (${meta.model || 'Anthropic API'})`
-                : 'Deterministic template-based findings synthesis'}
+            <div className="flex items-center gap-2">
+              <h3 id="explanation-panel-title" className="text-sm font-bold text-foreground">
+                {isAI ? 'Gemini AI Threat Intelligence' : 'Standard Security Explanation'}
+              </h3>
+              {isAI && (
+                <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  <ShieldCheck className="h-3 w-3" />
+                  Grounded
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] text-muted-foreground flex items-center gap-2 flex-wrap">
+              <span>
+                {isAI
+                  ? `Google Gemini Engine (${meta.model || 'gemini-3.5-flash'})`
+                  : 'Deterministic findings template'}
+              </span>
+              {meta.latency_ms > 0 && (
+                <span className="inline-flex items-center gap-0.5 text-primary/80 font-mono">
+                  <Zap className="h-3 w-3" />
+                  {(meta.latency_ms / 1000).toFixed(2)}s
+                </span>
+              )}
             </p>
           </div>
         </div>
 
-        {/* Provenance Badge */}
-        <Badge
-          variant={isAI ? 'default' : 'secondary'}
-          className="text-[10px] font-semibold shrink-0"
-        >
-          {isAI ? 'AI-generated explanation' : 'Standard explanation (AI unavailable)'}
-        </Badge>
+        {/* Provenance & Confidence Badges */}
+        <div className="flex items-center gap-2 flex-wrap sm:justify-end">
+          {explanation.confidence && (
+            <Badge
+              variant="outline"
+              className={cn(
+                'text-[10px] font-semibold capitalize',
+                explanation.confidence === 'high'
+                  ? 'border-emerald-500/30 text-emerald-600 dark:text-emerald-400 bg-emerald-500/5'
+                  : explanation.confidence === 'medium'
+                  ? 'border-amber-500/30 text-amber-600 dark:text-amber-400 bg-amber-500/5'
+                  : 'border-slate-500/30 text-slate-600 dark:text-slate-400'
+              )}
+            >
+              {explanation.confidence} Confidence
+            </Badge>
+          )}
+
+          <Badge
+            variant={isAI ? 'default' : 'secondary'}
+            className="text-[10px] font-semibold shrink-0 gap-1"
+          >
+            {isAI ? (
+              <>
+                <Sparkles className="h-3 w-3" />
+                <span>AI Synthesis</span>
+              </>
+            ) : (
+              'Standard Template'
+            )}
+          </Badge>
+        </div>
       </div>
 
       {/* Prompt Injection Suspected Security Banner */}
@@ -197,11 +241,18 @@ export function ExplanationPanel({
       )}
 
       {/* Plain Language Summary */}
-      <div className="space-y-1.5">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Plain-Language Summary
-        </span>
-        <p className="text-sm text-foreground leading-relaxed font-sans font-medium whitespace-pre-wrap">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Plain-Language Executive Summary
+          </span>
+          <CopyButton
+            textToCopy={explanation.summary}
+            label="Copy Summary"
+            className="h-6 px-2 text-[10px] gap-1"
+          />
+        </div>
+        <p className="text-sm text-foreground leading-relaxed font-sans font-medium whitespace-pre-wrap rounded-md bg-muted/20 border border-border/30 p-3.5">
           {explanation.summary}
         </p>
       </div>

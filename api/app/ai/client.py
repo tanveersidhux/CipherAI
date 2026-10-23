@@ -67,9 +67,9 @@ class HttpxLLMClient:
         system_prompt: str,
         user_prompt: str,
         json_schema: dict[str, Any] | None = None,
-        timeout_seconds: float = 12.0,
+        timeout_seconds: float | None = None,
     ) -> str:
-        effective_timeout = timeout_seconds or self.timeout
+        effective_timeout = timeout_seconds if timeout_seconds is not None else self.timeout
         start_time = time.perf_counter()
 
         try:
@@ -99,10 +99,14 @@ class HttpxLLMClient:
             raise
 
     async def _call_gemini(self, system: str, user: str, timeout: float) -> str:
-        model_name = self.model if "gemini" in self.model else "gemini-1.5-flash"
-        base_endpoint = self.base_url or "https://generativelanguage.googleapis.com"
-        url = f"{base_endpoint}/v1beta/models/{model_name}:generateContent?key={self.api_key}"
+        primary_model = self.model if "gemini" in self.model else "gemini-flash-latest"
+        # Candidate model cascade to prevent single-model free-tier quota exhaustion
+        candidate_models = [primary_model]
+        for fallback in ("gemini-flash-latest", "gemini-3.7-flash", "gemini-3.8-flash", "gemini-3.5-flash-lite"):
+            if fallback not in candidate_models:
+                candidate_models.append(fallback)
 
+        base_endpoint = self.base_url or "https://generativelanguage.googleapis.com"
         headers = {
             "Content-Type": "application/json",
         }
@@ -122,26 +126,51 @@ class HttpxLLMClient:
             },
         }
 
-        try:
-            async with httpx.AsyncClient(timeout=timeout) as client:
-                resp = await client.post(url, headers=headers, json=payload)
-        except httpx.TimeoutException as exc:
-            raise AITimeoutError(f"Gemini request timed out after {timeout}s") from exc
-        except httpx.NetworkError as exc:
-            raise AINetworkError(f"Gemini network connection failed: {exc}") from exc
-        except Exception as exc:
-            raise AINetworkError(f"Unexpected connection error: {exc}") from exc
+        last_resp = None
+        for model_name in candidate_models:
+            url = f"{base_endpoint}/v1beta/models/{model_name}:generateContent?key={self.api_key}"
+            for attempt in range(2):
+                try:
+                    async with httpx.AsyncClient(timeout=timeout) as client:
+                        resp = await client.post(url, headers=headers, json=payload)
+                        last_resp = resp
+                except httpx.TimeoutException as exc:
+                    raise AITimeoutError(f"Gemini request timed out after {timeout}s") from exc
+                except httpx.NetworkError as exc:
+                    if attempt == 0:
+                        await asyncio.sleep(1.0)
+                        continue
+                    raise AINetworkError(f"Gemini network connection failed: {exc}") from exc
+                except Exception as exc:
+                    raise AINetworkError(f"Unexpected connection error: {exc}") from exc
 
-        if resp.status_code == 429:
-            raise AIRateLimitError("Gemini API rate limit exceeded")
-        if resp.status_code >= 400:
+                if resp.status_code in (502, 503, 504) and attempt == 0:
+                    await asyncio.sleep(1.5)
+                    continue
+                break
+
+            # If quota exceeded (429) or model deprecated (404), try next candidate model
+            if last_resp is not None and last_resp.status_code in (429, 404):
+                logger.info("Gemini model %s returned status %d; trying next candidate", model_name, last_resp.status_code)
+                continue
+
+            # If successful or terminal non-retryable error, stop cascade
+            break
+
+        if last_resp is None:
+            raise AIProviderError("No response received from any Gemini candidate model")
+
+        if last_resp.status_code == 429:
+            raise AIRateLimitError("Gemini API rate limit exceeded across all candidate models")
+        if last_resp.status_code >= 400:
+            logger.warning("Gemini API error (%d): %s", last_resp.status_code, last_resp.text)
             raise AIProviderError(
-                f"Gemini API returned status {resp.status_code}",
-                status_code=resp.status_code,
+                f"Gemini API returned status {last_resp.status_code}: {last_resp.text}",
+                status_code=last_resp.status_code,
             )
 
         try:
-            data = resp.json()
+            data = last_resp.json()
             candidates = data.get("candidates", [])
             if not candidates:
                 raise AIProviderError("Gemini returned empty candidates")
@@ -149,7 +178,9 @@ class HttpxLLMClient:
             text_parts = [p.get("text", "") for p in parts]
             return "".join(text_parts)
         except Exception as exc:
-            raise AIProviderError(f"Failed to parse Gemini response: {exc}") from exc
+            if isinstance(exc, (AIProviderError, AIRateLimitError, AITimeoutError)):
+                raise
+            raise AIProviderError(f"Failed to parse Gemini output: {exc}") from exc
 
     async def _call_anthropic(self, system: str, user: str, timeout: float) -> str:
         url = f"{self.base_url or 'https://api.anthropic.com'}/v1/messages"

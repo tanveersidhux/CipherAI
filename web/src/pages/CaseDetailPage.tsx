@@ -15,7 +15,6 @@ import {
   Clock,
   ShieldCheck,
   ShieldAlert,
-  AlertTriangle,
   Loader2,
   FileText,
   Send,
@@ -32,8 +31,6 @@ import type {
 import type { ScanSummaryItem } from '@/types/history'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import {
   Dialog,
@@ -41,7 +38,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogTrigger,
 } from '@/components/ui/dialog'
 import { RiskBadge } from '@/components/common/RiskBadge'
 import { DefangedText } from '@/components/common/DefangedText'

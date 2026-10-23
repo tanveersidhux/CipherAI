@@ -49,7 +49,7 @@ class Settings(BaseSettings):
     SUPABASE_ANON_KEY: SecretStr | None = None
     SUPABASE_SERVICE_ROLE_KEY: SecretStr | None = None
     SUPABASE_JWT_SECRET: SecretStr | None = None
-    DB_HEALTHCHECK_TIMEOUT_SECONDS: Annotated[float, Field(ge=0.1, le=30.0)] = 2.0
+    DB_HEALTHCHECK_TIMEOUT_SECONDS: Annotated[float, Field(ge=0.1, le=30.0)] = 4.0
     SCAN_RETENTION_DAYS: Annotated[int, Field(ge=0, le=3650)] = 90
 
     # LLM & AI Intelligence Configuration
@@ -162,7 +162,7 @@ class Settings(BaseSettings):
             if self.LLM_PROVIDER in ("anthropic", ""):
                 self.LLM_PROVIDER = "gemini"
                 if self.LLM_MODEL == "claude-3-5-sonnet-20241022":
-                    self.LLM_MODEL = "gemini-1.5-flash"
+                    self.LLM_MODEL = "gemini-3.5-flash"
 
         # LLM check: If LLM is enabled but no API key is set, warn instead of crashing
         if self.LLM_ENABLED and not self.LLM_API_KEY:

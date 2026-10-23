@@ -49,7 +49,26 @@ export function useServiceStatus(): ServiceStatusState {
 
   useEffect(() => {
     check()
-  }, [check])
+
+    // Auto-retry when offline (every 5s) or periodic liveness when online (every 60s)
+    const intervalMs = isBackendReachable ? 60000 : 5000
+    const interval = setInterval(() => {
+      check()
+    }, intervalMs)
+
+    const handleFocusOrOnline = () => {
+      check()
+    }
+
+    window.addEventListener('focus', handleFocusOrOnline)
+    window.addEventListener('online', handleFocusOrOnline)
+
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('focus', handleFocusOrOnline)
+      window.removeEventListener('online', handleFocusOrOnline)
+    }
+  }, [check, isBackendReachable])
 
   return {
     isChecking,
@@ -60,3 +79,4 @@ export function useServiceStatus(): ServiceStatusState {
     refetch: check,
   }
 }
+

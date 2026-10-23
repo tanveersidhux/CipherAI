@@ -115,6 +115,11 @@ function mapToErrorCode(rawCode: string, httpStatus: number): ErrorCode {
   if (normalized === 'TIMEOUT') return 'TIMEOUT'
   if (normalized === 'INVALID_RESPONSE') return 'INVALID_RESPONSE'
 
+  if (normalized === 'UNAUTHENTICATED') return 'UNAUTHENTICATED'
+  if (normalized === 'FORBIDDEN') return 'FORBIDDEN'
+
+  if (httpStatus === 401) return 'UNAUTHENTICATED'
+  if (httpStatus === 403) return 'FORBIDDEN'
   if (httpStatus === 422) return 'VALIDATION_ERROR'
   if (httpStatus === 413) return 'INPUT_TOO_LARGE'
   if (httpStatus === 429) return 'RATE_LIMITED'
