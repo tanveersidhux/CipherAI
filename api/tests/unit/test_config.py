@@ -133,12 +133,13 @@ def test_numeric_bounds_validation() -> None:
 def test_gemini_api_key_mapping() -> None:
     """Verify GEMINI_API_KEY maps to LLM_API_KEY, provider gemini, and default model."""
     settings = Settings(
+        _env_file=None,
         AI_ENABLED=True,
         GEMINI_API_KEY=SecretStr("AIzaSyFakeKeyForGeminiTest123"),
     )
     assert settings.LLM_ENABLED is True
     assert settings.LLM_PROVIDER == "gemini"
-    assert settings.LLM_MODEL == "gemini-1.5-flash"
+    assert settings.LLM_MODEL == "gemini-3.5-flash"
     assert settings.LLM_API_KEY is not None
     assert settings.LLM_API_KEY.get_secret_value() == "AIzaSyFakeKeyForGeminiTest123"
     assert settings.llm_status == "enabled"

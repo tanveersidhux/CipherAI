@@ -7,6 +7,7 @@ from app.main import create_app
 from app.repositories import get_scan_repository
 from app.repositories.fakes import FakeScanRepository, InMemoryStore
 from app.schemas.scans import MessageScanRequest, UrlScanRequest
+from app.schemas.threat_report import ScanType
 from app.services.scan_service import scan_message, scan_url
 from tests.unit.test_auth import create_token
 
@@ -45,11 +46,19 @@ def test_list_scans_and_filters(default_settings: Settings) -> None:
     r3 = scan_message(MessageScanRequest(message="Urgent wire transfer needed"), default_settings)
     s3_id = repo.save_scan(USER_A, r3, title="Wire Scam", is_pinned=False, tags=["scam"])
 
+    # Also seed an email scan
+    email_report = r3.model_copy(deep=True)
+    email_report.scan_type = ScanType.EMAIL
+    email_report.report_id = "test-email-report-uuid"
+    email_report.input.display_value = "Invoice #9823 overdue payment"
+    email_report.input.normalized_value = "invoice #9823 overdue payment"
+    s4_id = repo.save_scan(USER_A, email_report, title="Suspicious Invoice Email", is_pinned=False, tags=["email"])
+
     # 1. List all
     resp = client.get("/api/v1/scans", headers=headers)
     assert resp.status_code == 200
     items = resp.json()["items"]
-    assert len(items) == 3
+    assert len(items) == 4
 
     # 2. Filter by scan_type=message
     resp = client.get("/api/v1/scans?scan_type=message", headers=headers)
@@ -57,6 +66,13 @@ def test_list_scans_and_filters(default_settings: Settings) -> None:
     items = resp.json()["items"]
     assert len(items) == 1
     assert items[0]["id"] == s3_id
+
+    # 2b. Filter by scan_type=email
+    resp = client.get("/api/v1/scans?scan_type=email", headers=headers)
+    assert resp.status_code == 200
+    items = resp.json()["items"]
+    assert len(items) == 1
+    assert items[0]["id"] == s4_id
 
     # 3. Filter by tag=lure
     resp = client.get("/api/v1/scans?tag=lure", headers=headers)

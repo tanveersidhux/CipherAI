@@ -29,7 +29,6 @@ class EmailScanJsonRequest(BaseModel):
 )
 async def scan_email_endpoint(
     request: Request,
-    body: EmailScanJsonRequest | None = None,
     settings: Settings = Depends(get_settings),
     user: CurrentUser | None = Depends(get_optional_user),
     scan_repo: ScanRepository = Depends(get_scan_repository),
@@ -41,8 +40,9 @@ async def scan_email_endpoint(
             detail="Email analysis feature is disabled in configuration.",
         )
 
-    content_type = request.headers.get("content-type", "")
+    content_type = request.headers.get("content-type", "").lower()
     raw_bytes: bytes
+    include_reputation: bool = True
 
     if "multipart/form-data" in content_type:
         form = await request.form()
@@ -50,8 +50,17 @@ async def scan_email_endpoint(
         if not uploaded_file or not hasattr(uploaded_file, "read"):
             raise ValidationError("A valid .eml file must be provided under field 'file'.")
         raw_bytes = await uploaded_file.read()
-    elif body and body.raw_email:
-        raw_bytes = body.raw_email.encode("utf-8")
+        rep_val = form.get("include_reputation")
+        if rep_val is not None:
+            include_reputation = str(rep_val).lower() not in ("false", "0", "no")
+    elif "application/json" in content_type:
+        try:
+            payload = await request.json()
+            validated_body = EmailScanJsonRequest(**payload)
+            raw_bytes = validated_body.raw_email.encode("utf-8")
+            include_reputation = validated_body.include_reputation
+        except Exception as e:
+            raise ValidationError(f"Invalid JSON payload: {e}") from e
     else:
         # Fallback to reading raw body
         raw_bytes = await request.body()
@@ -62,8 +71,6 @@ async def scan_email_endpoint(
         raise InputTooLargeError(
             f"Email size ({len(raw_bytes)} bytes) exceeds the {settings.EMAIL_MAX_BYTES} byte limit."
         )
-
-    include_reputation = body.include_reputation if body else True
     report = await analyze_email_content(
         raw_bytes=raw_bytes,
         settings=settings,

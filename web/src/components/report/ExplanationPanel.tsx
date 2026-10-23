@@ -170,7 +170,7 @@ export function ExplanationPanel({
           <div>
             <div className="flex items-center gap-2">
               <h3 id="explanation-panel-title" className="text-sm font-bold text-foreground">
-                {isAI ? 'Gemini AI Threat Intelligence' : 'Standard Security Explanation'}
+                {isAI ? 'AI Threat Intelligence Analysis' : 'Standard Security Explanation'}
               </h3>
               {isAI && (
                 <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
@@ -220,10 +220,10 @@ export function ExplanationPanel({
             {isAI ? (
               <>
                 <Sparkles className="h-3 w-3" />
-                <span>AI Synthesis</span>
+                <span>AI-generated explanation</span>
               </>
             ) : (
-              'Standard Template'
+              'Standard explanation (AI unavailable)'
             )}
           </Badge>
         </div>

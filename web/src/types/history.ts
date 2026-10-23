@@ -16,7 +16,7 @@ export interface ScanSummaryItem {
 export interface ListScansParams {
   limit?: number
   cursor?: string
-  scan_type?: 'url' | 'message'
+  scan_type?: 'url' | 'message' | 'email'
   risk_level?: string
   from?: string
   to?: string

@@ -84,6 +84,7 @@ export default function HistoryPage() {
             <option value="all">All Types</option>
             <option value="url">URL</option>
             <option value="message">Message</option>
+            <option value="email">Email</option>
           </select>
 
           <Button

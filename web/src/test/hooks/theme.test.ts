@@ -8,9 +8,27 @@ describe('useTheme Hook', () => {
     document.documentElement.classList.remove('dark')
   })
 
-  it('defaults to system preference and applies class accordingly', () => {
+  it('defaults to light theme and keeps .dark class removed', () => {
     const { result } = renderHook(() => useTheme())
-    expect(result.current.theme).toBe('system')
+    expect(result.current.theme).toBe('light')
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+  })
+
+  it('toggles from light to dark and back in one click using toggleTheme', () => {
+    const { result } = renderHook(() => useTheme())
+    expect(result.current.theme).toBe('light')
+
+    act(() => {
+      result.current.toggleTheme()
+    })
+    expect(result.current.theme).toBe('dark')
+    expect(document.documentElement.classList.contains('dark')).toBe(true)
+
+    act(() => {
+      result.current.toggleTheme()
+    })
+    expect(result.current.theme).toBe('light')
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
   })
 
   it('persists selected theme to localStorage and applies .dark class', () => {

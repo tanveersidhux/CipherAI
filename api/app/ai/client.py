@@ -1,5 +1,6 @@
 """LLM provider client abstraction and concrete HTTP implementations using httpx."""
 
+import asyncio
 import logging
 import time
 from typing import Any, Protocol, runtime_checkable

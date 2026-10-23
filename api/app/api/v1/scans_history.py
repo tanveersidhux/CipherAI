@@ -33,7 +33,7 @@ router = APIRouter(prefix="/scans", tags=["Scan History"])
 def list_scans_endpoint(
     limit: int = Query(default=20, ge=1, le=100),
     cursor: str | None = Query(default=None),
-    scan_type: Literal["url", "message"] | None = Query(default=None),
+    scan_type: Literal["url", "message", "email"] | None = Query(default=None),
     risk_level: list[str] | None = Query(default=None),
     from_date: str | None = Query(default=None, alias="from"),
     to_date: str | None = Query(default=None, alias="to"),

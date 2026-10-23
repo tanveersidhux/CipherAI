@@ -3,7 +3,6 @@ import {
   Settings,
   Sun,
   Moon,
-  Laptop,
   Trash2,
   Lock,
   Check,
@@ -26,6 +25,7 @@ export default function SettingsPage() {
   const handleResetStorage = () => {
     try {
       localStorage.removeItem('cipher_theme')
+      setTheme('light')
       setResetDone(true)
       setTimeout(() => setResetDone(false), 3000)
     } catch {
@@ -56,39 +56,29 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="text-base">Appearance & Interface Theme</CardTitle>
           <CardDescription className="text-xs">
-            Select light mode, dark mode, or follow your operating system default.
+            Select your preferred display theme. Default is clean Light mode; switch to Dark mode in one click.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3 max-w-md">
             <Button
               type="button"
               variant={theme === 'light' ? 'default' : 'outline'}
               onClick={() => setTheme('light')}
-              className="flex items-center gap-2 h-11"
+              className="flex items-center justify-center gap-2 h-11 cursor-pointer transition-all font-medium"
             >
-              <Sun className="h-4 w-4" />
-              <span>Light</span>
+              <Sun className="h-4 w-4 text-amber-500" />
+              <span>Light (Default)</span>
             </Button>
 
             <Button
               type="button"
               variant={theme === 'dark' ? 'default' : 'outline'}
               onClick={() => setTheme('dark')}
-              className="flex items-center gap-2 h-11"
+              className="flex items-center justify-center gap-2 h-11 cursor-pointer transition-all font-medium"
             >
-              <Moon className="h-4 w-4" />
+              <Moon className="h-4 w-4 text-primary" />
               <span>Dark</span>
-            </Button>
-
-            <Button
-              type="button"
-              variant={theme === 'system' ? 'default' : 'outline'}
-              onClick={() => setTheme('system')}
-              className="flex items-center gap-2 h-11"
-            >
-              <Laptop className="h-4 w-4" />
-              <span>System</span>
             </Button>
           </div>
         </CardContent>

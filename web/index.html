@@ -2,7 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="CIPHER AI — Understand threats. Protect what matters. AI-assisted threat intelligence application for analyzing suspicious URLs and scam messages." />
     <title>CIPHER AI — Understand threats. Protect what matters.</title>
@@ -10,14 +11,13 @@
       (function() {
         try {
           var saved = localStorage.getItem('cipher_theme');
-          var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-          if (saved === 'dark' || (!saved && systemDark)) {
+          if (saved === 'dark') {
             document.documentElement.classList.add('dark');
           } else {
             document.documentElement.classList.remove('dark');
           }
         } catch (e) {
-          /* Fallback gracefully if localStorage is disabled */
+          document.documentElement.classList.remove('dark');
         }
       })();
     </script>

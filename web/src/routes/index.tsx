@@ -9,8 +9,6 @@ const LandingPage = lazy(() => import('@/pages/LandingPage'))
 const ScanUrlPage = lazy(() => import('@/pages/ScanUrlPage'))
 const ScanMessagePage = lazy(() => import('@/pages/ScanMessagePage'))
 const EmailScanPage = lazy(() => import('@/pages/EmailScanPage'))
-const BatchesPage = lazy(() => import('@/pages/BatchesPage'))
-const BatchDetailPage = lazy(() => import('@/pages/BatchDetailPage'))
 const PrintReportPage = lazy(() => import('@/pages/PrintReportPage'))
 const ReportPage = lazy(() => import('@/pages/ReportPage'))
 const HistoryPage = lazy(() => import('@/pages/HistoryPage'))
@@ -38,23 +36,6 @@ export function AppRoutes() {
           <Route path="scan/email" element={<EmailScanPage />} />
           <Route path="reports/:reportId" element={<ReportPage />} />
           <Route path="login" element={<LoginPage />} />
-          
-          <Route
-            path="batches"
-            element={
-              <ProtectedRoute>
-                <BatchesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="batches/:batchId"
-            element={
-              <ProtectedRoute>
-                <BatchDetailPage />
-              </ProtectedRoute>
-            }
-          />
           
           {/* Protected Routes requiring Supabase authentication */}
           <Route

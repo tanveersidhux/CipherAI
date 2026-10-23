@@ -105,8 +105,8 @@ export function ScanHistoryTable({
                   <td className="px-4 py-3.5 text-xs uppercase font-mono font-semibold text-primary">
                     {item.scan_type}
                   </td>
-                  <td className="px-4 py-3.5 text-xs font-mono max-w-xs truncate text-foreground" title={item.display_value}>
-                    {item.display_value}
+                  <td className="px-4 py-3.5 text-xs font-mono max-w-xs truncate text-foreground" title={item.display_value || (item as any).title || (item as any).input_preview}>
+                    {item.display_value || (item as any).title || (item as any).input_preview}
                   </td>
                   <td className="px-4 py-3.5 whitespace-nowrap">
                     <div className="flex items-center gap-2">
@@ -157,7 +157,7 @@ export function ScanHistoryTable({
             </div>
 
             <p className="font-mono text-xs text-foreground break-all bg-muted/40 p-2 rounded">
-              {item.display_value}
+              {item.display_value || (item as any).title || (item as any).input_preview}
             </p>
 
             <div className="flex items-center justify-between pt-1">

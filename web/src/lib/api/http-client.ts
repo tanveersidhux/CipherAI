@@ -48,6 +48,47 @@ export class HttpCipherApi implements CipherApi {
     return report
   }
 
+  private getAllSessionReports(): ThreatReport[] {
+    const map = new Map<string, ThreatReport>(this.sessionReports)
+    try {
+      const raw = sessionStorage.getItem('cipher_session_reports')
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed)) {
+          for (const [k, v] of parsed) {
+            map.set(k, v)
+          }
+        }
+      }
+    } catch {
+      // ignore storage access errors
+    }
+    return Array.from(map.values())
+  }
+
+  private removeFromSessionStorage(scanId: string): void {
+    try {
+      const raw = sessionStorage.getItem('cipher_session_reports')
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed)) {
+          const filtered = parsed.filter(([k]) => k !== scanId)
+          sessionStorage.setItem('cipher_session_reports', JSON.stringify(filtered))
+        }
+      }
+      const rawSum = sessionStorage.getItem('cipher_session_summaries')
+      if (rawSum) {
+        const parsedSum = JSON.parse(rawSum)
+        if (Array.isArray(parsedSum)) {
+          const filteredSum = parsedSum.filter((s: any) => s.id !== scanId)
+          sessionStorage.setItem('cipher_session_summaries', JSON.stringify(filteredSum))
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   async listScans(params?: ListScansParams): Promise<ListScansResponse> {
     const query = new URLSearchParams()
     if (params?.limit) query.set('limit', String(params.limit))
@@ -63,7 +104,18 @@ export class HttpCipherApi implements CipherApi {
     try {
       const qs = query.toString() ? `?${query.toString()}` : ''
       const res = await apiFetch<ListScansResponse>(`/api/v1/scans${qs}`)
-      return res.data
+      const sessionItems = this.listSessionScans(params).items
+      const existingIds = new Set(res.data.items.map((it) => it.id))
+      const combined = [...res.data.items]
+      for (const sItem of sessionItems) {
+        if (!existingIds.has(sItem.id)) {
+          combined.push(sItem)
+        }
+      }
+      return {
+        ...res.data,
+        items: combined,
+      }
     } catch (err) {
       if (err instanceof ApiError && (err.http_status === 401 || err.status === 401)) {
         // Fall back to guest session scans
@@ -74,12 +126,12 @@ export class HttpCipherApi implements CipherApi {
   }
 
   private listSessionScans(params?: ListScansParams): ListScansResponse {
-    let items: ScanSummaryItem[] = Array.from(this.sessionReports.values()).map((r) => ({
+    let items: ScanSummaryItem[] = this.getAllSessionReports().map((r) => ({
       id: r.report_id,
       scan_type: r.scan_type,
       title: r.input.display_value,
       input_preview:
-        r.scan_type === 'message'
+        r.scan_type === 'message' || r.scan_type === 'email'
           ? truncateForDisplay(r.input.display_value, 50).display
           : r.input.display_value,
       risk_score: r.assessment.risk_score,
@@ -101,6 +153,15 @@ export class HttpCipherApi implements CipherApi {
       items = items.filter((item) => item.scan_type === params.scan_type)
     }
 
+    if (params?.q && params.q.trim()) {
+      const query = params.q.trim().toLowerCase()
+      items = items.filter(
+        (item) =>
+          item.title.toLowerCase().includes(query) ||
+          item.input_preview.toLowerCase().includes(query)
+      )
+    }
+
     const limit = params?.limit ?? 20
     const paged = items.slice(0, limit)
 
@@ -115,7 +176,7 @@ export class HttpCipherApi implements CipherApi {
       const res = await apiFetch<ThreatReport>(`/api/v1/scans/${scanId}`)
       return res.data
     } catch (err) {
-      // Fall back to session report if guest
+      // Fall back to session report if guest or local
       const found = this.sessionReports.get(scanId)
       if (found) {
         return found
@@ -147,9 +208,12 @@ export class HttpCipherApi implements CipherApi {
       await apiFetch<void>(`/api/v1/scans/${scanId}`, {
         method: 'DELETE',
       })
+      this.sessionReports.delete(scanId)
+      this.removeFromSessionStorage(scanId)
     } catch (err) {
-      if (this.sessionReports.has(scanId)) {
-        this.sessionReports.delete(scanId)
+      this.sessionReports.delete(scanId)
+      this.removeFromSessionStorage(scanId)
+      if (err instanceof ApiError && (err.http_status === 401 || err.status === 401 || err.http_status === 404 || err.status === 404)) {
         return
       }
       throw err
@@ -169,7 +233,7 @@ export class HttpCipherApi implements CipherApi {
   }
 
   private computeSessionDashboard(): DashboardSummaryResponse {
-    const allReports = Array.from(this.sessionReports.values())
+    const allReports = this.getAllSessionReports()
 
     const riskCounts: Record<string, number> = {
       low: 0,

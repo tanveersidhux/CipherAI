@@ -17,7 +17,7 @@ class ScanSummaryItem(StrictModel):
     """Compact summary item rendered within history tables, cards, and dashboards."""
 
     id: str = Field(..., description="Unique scan identifier.")
-    scan_type: Literal["url", "message"] = Field(..., description="Type of threat target scanned.")
+    scan_type: Literal["url", "message", "email"] = Field(..., description="Type of threat target scanned.")
     title: str = Field(..., description="Display title for the scan.")
     input_preview: str = Field(..., max_length=200, description="Safe truncated display preview.")
     risk_score: int = Field(..., ge=0, le=100, description="Computed risk score (0-100).")

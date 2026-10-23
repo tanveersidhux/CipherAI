@@ -64,8 +64,8 @@ export default function LoginPage() {
   return (
     <div className="py-12 px-4 max-w-md mx-auto space-y-6">
       <div className="text-center space-y-2">
-        <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-primary/10 border border-primary/20 text-primary mb-2 shadow-sm">
-          <ShieldCheck className="h-8 w-8" />
+        <div className="flex justify-center mb-2">
+          <img src="/logo.png" alt="CipherAI Logo" className="h-16 w-16 object-contain drop-shadow-md" />
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Welcome to CIPHER AI

@@ -19,6 +19,7 @@ from app.core.config import Settings
 @pytest.fixture
 def gemini_settings() -> Settings:
     return Settings(
+        _env_file=None,
         APP_ENV="development",
         AI_ENABLED=True,
         GEMINI_API_KEY=SecretStr("fake-gemini-key"),

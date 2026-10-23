@@ -4,6 +4,9 @@ import { ThreatReport } from '@/types/threat-report'
 import { ThreatReportView } from '@/components/report/ThreatReportView'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { getApiBaseUrl } from '@/lib/config'
+import { useScanSession } from '@/context/ScanSessionProvider'
+import { supabase } from '@/lib/supabaseClient'
 
 export default function EmailScanPage() {
   const [mode, setMode] = useState<'text' | 'file'>('file')
@@ -14,6 +17,7 @@ export default function EmailScanPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [report, setReport] = useState<ThreatReport | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const session = useScanSession()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -45,18 +49,35 @@ export default function EmailScanPage() {
 
     setIsSubmitting(true)
     try {
+      const baseUrl = getApiBaseUrl() || ''
+      const targetUrl = baseUrl ? `${baseUrl.replace(/\/+$/, '')}/api/v1/scans/email` : '/api/v1/scans/email'
+
+      // Attach Authorization token if signed in so backend saves to account history
+      const headers: Record<string, string> = {}
+      try {
+        const { data: { session: authSession } } = await supabase.auth.getSession()
+        if (authSession?.access_token) {
+          headers['Authorization'] = `Bearer ${authSession.access_token}`
+        }
+      } catch {
+        // Fall back gracefully to guest mode
+      }
+
       let res: Response
       if (mode === 'file' && file) {
         const formData = new FormData()
         formData.append('file', file)
-        res = await fetch('/api/v1/scans/email', {
+        formData.append('include_reputation', String(includeReputation))
+        res = await fetch(targetUrl, {
           method: 'POST',
+          headers,
           body: formData,
         })
       } else {
-        res = await fetch('/api/v1/scans/email', {
+        headers['Content-Type'] = 'application/json'
+        res = await fetch(targetUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({
             raw_email: rawEmail,
             include_reputation: includeReputation,
@@ -70,6 +91,7 @@ export default function EmailScanPage() {
       }
 
       const threatReport: ThreatReport = await res.json()
+      session.addScan(threatReport)
       setReport(threatReport)
     } catch (err: any) {
       setErrorMsg(err.message || 'An error occurred while inspecting the email.')

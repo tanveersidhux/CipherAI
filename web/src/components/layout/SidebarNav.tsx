@@ -13,7 +13,6 @@ import {
   LogOut,
   User,
   Mail,
-  Layers,
 } from 'lucide-react'
 import { Logo } from './Logo'
 import { ThemeToggle } from './ThemeToggle'
@@ -26,7 +25,6 @@ const PRIMARY_NAV_ITEMS = [
   { title: 'Scan URL', href: '/scan/url', icon: LinkIcon },
   { title: 'Scan Message', href: '/scan/message', icon: MessageSquareWarning },
   { title: 'Scan Email', href: '/scan/email', icon: Mail },
-  { title: 'Batch Scan', href: '/batches', icon: Layers },
   { title: 'History', href: '/history', icon: History },
   { title: 'Dashboard', href: '/dashboard', icon: BarChart3 },
   { title: 'Cases', href: '/cases', icon: FolderLock },

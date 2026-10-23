@@ -1,5 +1,5 @@
 import React from 'react'
-import { Sun, Moon, Laptop } from 'lucide-react'
+import { Sun, Moon } from 'lucide-react'
 import { useTheme } from '@/hooks/useTheme'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -9,44 +9,29 @@ export interface ThemeToggleProps {
   showLabels?: boolean
 }
 
-export function ThemeToggle({ className, showLabels = false }: ThemeToggleProps) {
-  const { theme, setTheme } = useTheme()
-
-  const cycleTheme = () => {
-    if (theme === 'light') setTheme('dark')
-    else if (theme === 'dark') setTheme('system')
-    else setTheme('light')
-  }
-
-  const getLabel = () => {
-    if (theme === 'light') return 'Light Theme'
-    if (theme === 'dark') return 'Dark Theme'
-    return 'System Theme'
-  }
+export function ThemeToggle({ className }: ThemeToggleProps) {
+  const { theme, toggleTheme } = useTheme()
+  const isDark = theme === 'dark'
 
   return (
     <Button
+      type="button"
       variant="outline"
-      size={showLabels ? 'default' : 'icon'}
-      onClick={cycleTheme}
-      className={cn('relative rounded-md text-foreground transition-colors', className)}
-      aria-label={`Current theme is ${theme}. Click to switch theme mode.`}
-      title={`Theme: ${getLabel()}`}
-    >
-      <Sun className="h-[1.15rem] w-[1.15rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 hidden [html:not(.dark)_&]:block" />
-      <Moon className="h-[1.15rem] w-[1.15rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 hidden [html.dark_&]:block" />
-      <span className="sr-only">Toggle theme</span>
-      {showLabels && (
-        <span className="ml-2 text-xs font-medium">
-          {theme === 'system' ? (
-            <span className="inline-flex items-center gap-1.5">
-              <Laptop className="h-3.5 w-3.5" /> Auto
-            </span>
-          ) : (
-            getLabel()
-          )}
-        </span>
+      size="sm"
+      onClick={toggleTheme}
+      className={cn(
+        'relative rounded-md text-foreground transition-all duration-200 border-border/60 hover:bg-muted select-none flex items-center justify-center h-8 w-8 p-0 cursor-pointer',
+        className
       )}
+      aria-label={`Current theme is ${theme}. Click once to switch to ${isDark ? 'light' : 'dark'} mode.`}
+      title={isDark ? 'Click to switch to Light mode' : 'Click to switch to Dark mode'}
+    >
+      {isDark ? (
+        <Moon className="h-4 w-4 text-primary transition-transform duration-200 hover:rotate-12" aria-hidden="true" />
+      ) : (
+        <Sun className="h-4 w-4 text-amber-500 transition-transform duration-200 hover:rotate-45" aria-hidden="true" />
+      )}
+      <span className="sr-only">Toggle theme</span>
     </Button>
   )
 }

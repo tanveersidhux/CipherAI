@@ -53,7 +53,7 @@ describe('End-to-End Scan Workflows', () => {
     expect(screen.getByText(/hxxps:\/\/secure-login\[\.\]example\[\.\]test\/verify/i)).toBeInTheDocument()
 
     // Verify risk badge
-    expect(screen.getByText(/High Risk Detected/i)).toBeInTheDocument()
+    expect(screen.getByText('High risk indicators identified')).toBeInTheDocument()
 
     // Verify asynchronous explanation badge rendered
     await waitFor(() => {
